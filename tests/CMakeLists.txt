@@ -27,6 +27,8 @@ foreach(testdir ${TEST_DIRS})
                 ${UNITY_DIR}
             )
 
+            target_link_libraries(${EXEC_NAME} PRIVATE core)
+
             # Register with CTest
             add_test(NAME ${EXEC_NAME} COMMAND ${EXEC_NAME})
         endif()
