@@ -7,13 +7,14 @@ void tearDown() {}
 void testTokens(char *input, Token *expectedTokens) {
   Lexer *l = newLexer(input);
 
-  int counter = 1;
+  int counter = 0;
 
-  while (!l->isEOF) {
-    Token *actualToken = nextToken(l);
+  while (l->isEOF == false) {
+    Token *actualToken = lexer_next(l);
     Token expectedToken = expectedTokens[counter];
 
-    TEST_ASSERT_EQUAL_MESSAGE(actualToken, expectedTokens, "Tokens differ!");
+    TEST_ASSERT_EQUAL_INT(expectedToken.Type, actualToken->Type);
+    TEST_ASSERT_EQUAL_STRING(expectedToken.value, actualToken->value);
 
     counter += 1;
   }
@@ -31,206 +32,172 @@ void test_single_symbol() {
 }
 
 void test_symbols() {
-  char *input = "+ - * / ! % ^ , .";
+  char *input = "- + * / ! % ^ , .";
 
   Token expectedTokens[] = {
-      {PLUS, "+"},   {MINUS, "-"}, {MULTIPLY, "*"}, {DIVIDE, "/"},
-      {DIVIDE, "/"}, {BANG, "!"},  {MODULO, "%"},   {EXPONENT, "^"},
-      {COMMA, ","},  {DOT, "."},   {TOKEN_EOF, ""},
+      {MINUS, "-"}, {PLUS, "+"},     {MULTIPLY, "*"}, {DIVIDE, "/"},
+      {BANG, "!"},  {MODULO, "%"},   {EXPONENT, "^"}, {COMMA, ","},
+      {DOT, "."},   {TOKEN_EOF, ""},
   };
+
+  testTokens(input, expectedTokens);
 }
 
 void test_comparison_operators() {
-    char *input = "== != <= >=";
+  char *input = "== != <= >=";
 
-    Token expectedTokens[] = {
-        {EQ, "=="},
-        {NEQ, "!="},
-        {LTE, "<="},
-        {GTE, ">="},
-        {TOKEN_EOF, ""},
-    };
+  Token expectedTokens[] = {
+      {EQ, "=="}, {NEQ, "!="}, {LTE, "<="}, {GTE, ">="}, {TOKEN_EOF, ""},
+  };
 
-    testTokens(input, expectedTokens);
+  testTokens(input, expectedTokens);
 }
 void test_single_char_comparison_assignment() {
-    char *input = "< > =";
+  char *input = "< > =";
 
-    Token expectedTokens[] = {
-        {LT, "<"},
-        {GT, ">"},
-        {ASSIGN, "="},
-        {TOKEN_EOF, ""},
-    };
+  Token expectedTokens[] = {
+      {LT, "<"},
+      {GT, ">"},
+      {ASSIGN, "="},
+      {TOKEN_EOF, ""},
+  };
 
-    testTokens(input, expectedTokens);
+  testTokens(input, expectedTokens);
 }
 
 void test_delimiters() {
-    char *input = "( ) { } [ ]";
+  char *input = "( ) { } [ ]";
 
-    Token expectedTokens[] = {
-        {LPAREN, "("},
-        {RPAREN, ")"},
-        {LBRACE, "{"},
-        {RBRACE, "}"},
-        {LSQUARE, "["},
-        {RSQUARE, "]"},
-        {TOKEN_EOF, ""},
-    };
+  Token expectedTokens[] = {
+      {LPAREN, "("},  {RPAREN, ")"},  {LBRACE, "{"},   {RBRACE, "}"},
+      {LSQUARE, "["}, {RSQUARE, "]"}, {TOKEN_EOF, ""},
+  };
 
-    testTokens(input, expectedTokens);
+  testTokens(input, expectedTokens);
 }
 void test_dots() {
-    char *input = ".. ...";
+  char *input = ".. ...";
 
-    Token expectedTokens[] = {
-        {CONCAT, ".."},
-        {ELLIPSIS, "..."},
-        {TOKEN_EOF, ""},
-    };
+  Token expectedTokens[] = {
+      {CONCAT, ".."},
+      {ELLIPSIS, "..."},
+      {TOKEN_EOF, ""},
+  };
 
-    testTokens(input, expectedTokens);
+  testTokens(input, expectedTokens);
 }
 void test_identifiers() {
-    char *input = "foo bar _baz";
+  char *input = "foo bar _baz";
 
-    Token expectedTokens[] = {
-        {IDENTIFIER, "foo"},
-        {IDENTIFIER, "bar"},
-        {IDENTIFIER, "_baz"},
-        {TOKEN_EOF, ""},
-    };
+  Token expectedTokens[] = {
+      {IDENTIFIER, "foo"},
+      {IDENTIFIER, "bar"},
+      {IDENTIFIER, "_baz"},
+      {TOKEN_EOF, ""},
+  };
 
-    testTokens(input, expectedTokens);
+  testTokens(input, expectedTokens);
 }
 void test_numbers() {
-    char *input = "123 3.14";
+  char *input = "123 3.14";
 
-    Token expectedTokens[] = {
-        {INTEGER, "123"},
-        {FLOAT, "3.14"},
-        {TOKEN_EOF, ""},
-    };
+  Token expectedTokens[] = {
+      {INTEGER, "123"},
+      {FLOAT, "3.14"},
+      {TOKEN_EOF, ""},
+  };
 
-    testTokens(input, expectedTokens);
+  testTokens(input, expectedTokens);
 }
 void test_keywords() {
-    char *input = "if else return fn end let not and or then";
+  char *input = "if else return fn end let not and or then";
 
-    Token expectedTokens[] = {
-        {IF, "if"},
-        {ELSE, "else"},
-        {RETURN, "return"},
-        {FN, "fn"},
-        {END, "end"},
-        {LET, "let"},
-        {NOT, "not"},
-        {AND, "and"},
-        {OR, "or"},
-        {THEN, "then"},
-        {TOKEN_EOF, ""},
-    };
+  Token expectedTokens[] = {
+      {IF, "if"},   {ELSE, "else"}, {RETURN, "return"}, {FN, "fn"},
+      {END, "end"}, {LET, "let"},   {NOT, "not"},       {AND, "and"},
+      {OR, "or"},   {THEN, "then"}, {TOKEN_EOF, ""},
+  };
 
-    testTokens(input, expectedTokens);
+  testTokens(input, expectedTokens);
 }
 void test_literals() {
-    char *input = "nil true false";
+  char *input = "nil true false";
 
-    Token expectedTokens[] = {
-        {NIL, "nil"},
-        {TRUE, "true"},
-        {FALSE, "false"},
-        {TOKEN_EOF, ""},
-    };
+  Token expectedTokens[] = {
+      {NIL, "nil"},
+      {TRUE, "true"},
+      {FALSE, "false"},
+      {TOKEN_EOF, ""},
+  };
 
-    testTokens(input, expectedTokens);
+  testTokens(input, expectedTokens);
 }
 void test_strings() {
-    char *input = "\"hello\" 'world' [[long string]]";
+  char *input = "\"hello\" 'world' [[long string]]";
 
-    Token expectedTokens[] = {
-        {STRING_DOUBLE, "hello"},
-        {STRING_SINGLE, "world"},
-        {STRING_MULTILINE, "long string"},
-        {TOKEN_EOF, ""},
-    };
+  Token expectedTokens[] = {
+      {STRING_DOUBLE, "hello"},
+      {STRING_SINGLE, "world"},
+      {STRING_MULTILINE, "long string"},
+      {TOKEN_EOF, ""},
+  };
 
-    testTokens(input, expectedTokens);
+  testTokens(input, expectedTokens);
 }
 void test_single_line_comment_only() {
-    char *input = "-- this is a comment";
+  char *input = "-- this is a comment";
 
-    Token expectedTokens[] = {
-        {TOKEN_EOF, ""},
-    };
+  Token expectedTokens[] = {
+      {TOKEN_EOF, ""},
+  };
 
-    testTokens(input, expectedTokens);
+  testTokens(input, expectedTokens);
 }
 void test_multiline_comment_only() {
-    char *input = "--[[ this is a \n multiline comment ]]";
+  char *input = "--[[ this is a \n multiline comment ]]";
 
-    Token expectedTokens[] = {
-        {TOKEN_EOF, ""},
-    };
+  Token expectedTokens[] = {
+      {TOKEN_EOF, ""},
+  };
 
-    testTokens(input, expectedTokens);
+  testTokens(input, expectedTokens);
 }
 void test_multiline_comment_between_code() {
-    char *input =
-        "let y = 10\n"
-        "--[[\n"
-        "  this comment should be ignored\n"
-        "]]\n"
-        "y = y + 1";
+  char *input = "let y = 10\n"
+                "--[[\n"
+                "  this comment should be ignored\n"
+                "]]\n"
+                "y = y + 1";
 
-    Token expectedTokens[] = {
-        {LET, "let"},
-        {IDENTIFIER, "y"},
-        {ASSIGN, "="},
-        {INTEGER, "10"},
-        {IDENTIFIER, "y"},
-        {ASSIGN, "="},
-        {IDENTIFIER, "y"},
-        {PLUS, "+"},
-        {INTEGER, "1"},
-        {TOKEN_EOF, ""},
-    };
+  Token expectedTokens[] = {
+      {LET, "let"},      {IDENTIFIER, "y"}, {ASSIGN, "="},     {INTEGER, "10"},
+      {IDENTIFIER, "y"}, {ASSIGN, "="},     {IDENTIFIER, "y"}, {PLUS, "+"},
+      {INTEGER, "1"},    {TOKEN_EOF, ""},
+  };
 
-    testTokens(input, expectedTokens);
+  testTokens(input, expectedTokens);
 }
 
 void test_array() {
-    char *input = "[1,2,3]";
+  char *input = "[1,2,3]";
 
-    Token expectedTokens[] = {
-        {LSQUARE, "["},
-        {INTEGER, "1"},
-        {COMMA, ","},
-        {INTEGER, "2"},
-        {COMMA, ","},
-        {INTEGER, "3"},
-        {RSQUARE, "]"},
-        {TOKEN_EOF, ""},
-    };
+  Token expectedTokens[] = {
+      {LSQUARE, "["}, {INTEGER, "1"}, {COMMA, ","},   {INTEGER, "2"},
+      {COMMA, ","},   {INTEGER, "3"}, {RSQUARE, "]"}, {TOKEN_EOF, ""},
+  };
 
-    testTokens(input, expectedTokens);
+  testTokens(input, expectedTokens);
 }
 void test_types() {
-    char *input = "int float string bool void";
+  char *input = "int float string bool void";
 
-    Token expectedTokens[] = {
-        {TYPE, "int"},
-        {TYPE, "float"},
-        {TYPE, "string"},
-        {TYPE, "bool"},
-        {TYPE, "void"},
-        {TOKEN_EOF, ""},
-    };
+  Token expectedTokens[] = {
+      {TYPE, "int"},  {TYPE, "float"}, {TYPE, "string"},
+      {TYPE, "bool"}, {TYPE, "void"},  {TOKEN_EOF, ""},
+  };
 
-    testTokens(input, expectedTokens);
+  testTokens(input, expectedTokens);
 }
-
 
 int main() {
   UNITY_BEGIN();
