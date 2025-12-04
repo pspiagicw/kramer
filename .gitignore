@@ -1,0 +1,5 @@
+vendor
+CMakeCache.txt
+CMakeFiles
+build
+.cache
