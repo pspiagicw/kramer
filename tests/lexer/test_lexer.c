@@ -21,7 +21,7 @@ void testTokens(char *input, Token *expectedTokens) {
 }
 
 void test_single_symbol() {
-  char *input = "+";
+  char *input = "   +";
 
   Token expectedTokens[] = {
       {PLUS, "+"},
