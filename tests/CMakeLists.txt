@@ -1,5 +1,14 @@
-# Add Unity
-set(UNITY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/unity)
+# Download Unity if not already present
+include(FetchContent)
+FetchContent_Declare(
+    unity
+    GIT_REPOSITORY https://github.com/ThrowTheSwitch/Unity.git
+    GIT_TAG        v2.6.0
+    SOURCE_DIR     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/unity
+)
+FetchContent_MakeAvailable(unity)
+
+set(UNITY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/unity/src)
 set(UNITY_SRC ${UNITY_DIR}/unity.c)
 
 # List all test groups (subdirectories)
