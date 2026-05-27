@@ -12,7 +12,7 @@ GEN ?= Unix Makefiles
 TYPE ?= Debug
 
 
-.PHONY: all configure build test clean distclean
+.PHONY: all configure build test clean distclean format
 
 
 all: build
@@ -48,4 +48,10 @@ clean:
 # ------------------------------------------------------------
 distclean:
 	rm -rf $(BUILD_DIR)
+
+# ------------------------------------------------------------
+# Format all C sources and headers with clang-format
+# ------------------------------------------------------------
+format:
+	find . -path ./$(BUILD_DIR) -prune -o \( -name '*.c' -o -name '*.h' \) -print | xargs clang-format -i
 

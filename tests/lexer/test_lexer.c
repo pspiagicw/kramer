@@ -14,7 +14,7 @@ void testTokens(char *input, Token *expectedTokens) {
     Token expectedToken = expectedTokens[counter];
 
     TEST_ASSERT_EQUAL_INT(expectedToken.Type, actualToken->Type);
-    TEST_ASSERT_EQUAL_STRING(expectedToken.value, actualToken->value);
+    TEST_ASSERT_EQUAL_STRING(expectedToken.Value, actualToken->Value);
 
     counter += 1;
   }
@@ -163,16 +163,16 @@ void test_multiline_comment_only() {
   testTokens(input, expectedTokens);
 }
 void test_multiline_comment_between_code() {
-  char *input = "let y = 10\n"
+  char *input = "(let y 10)\n"
                 "--[[\n"
                 "  this comment should be ignored\n"
                 "]]\n"
-                "y = y + 1";
+                "(+ y 1)";
 
   Token expectedTokens[] = {
-      {LET, "let"},      {IDENTIFIER, "y"}, {ASSIGN, "="},     {INTEGER, "10"},
-      {IDENTIFIER, "y"}, {ASSIGN, "="},     {IDENTIFIER, "y"}, {PLUS, "+"},
-      {INTEGER, "1"},    {TOKEN_EOF, ""},
+      {LPAREN, "("}, {LET, "let"},        {IDENTIFIER, "y"}, {INTEGER, "10"},
+      {RPAREN, ")"}, {LPAREN, "("},       {PLUS, "+"},        {IDENTIFIER, "y"},
+      {INTEGER, "1"}, {RPAREN, ")"},      {TOKEN_EOF, ""},
   };
 
   testTokens(input, expectedTokens);
