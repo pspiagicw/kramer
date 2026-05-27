@@ -199,6 +199,89 @@ void test_types() {
     testTokens(input, expectedTokens);
 }
 
+void test_negative_numbers() {
+    char *input = "-42 -3.14";
+
+    Token expectedTokens[] = {
+        {INTEGER, "-42"},
+        {FLOAT, "-3.14"},
+        {TOKEN_EOF, ""},
+    };
+
+    testTokens(input, expectedTokens);
+}
+
+void test_nested_sexpr() {
+    char *input = "(+ 1 (- 3 2))";
+
+    Token expectedTokens[] = {
+        {LPAREN, "("}, {PLUS, "+"},     {INTEGER, "1"}, {LPAREN, "("},
+        {MINUS, "-"},  {INTEGER, "3"},  {INTEGER, "2"}, {RPAREN, ")"},
+        {RPAREN, ")"}, {TOKEN_EOF, ""},
+    };
+
+    testTokens(input, expectedTokens);
+}
+
+void test_empty_list() {
+    char *input = "()";
+
+    Token expectedTokens[] = {
+        {LPAREN, "("},
+        {RPAREN, ")"},
+        {TOKEN_EOF, ""},
+    };
+
+    testTokens(input, expectedTokens);
+}
+
+void test_hyphenated_identifier() {
+    char *input = "my-func is-null";
+
+    Token expectedTokens[] = {
+        {IDENTIFIER, "my-func"},
+        {IDENTIFIER, "is-null"},
+        {TOKEN_EOF, ""},
+    };
+
+    testTokens(input, expectedTokens);
+}
+
+void test_quote_shorthand() {
+    char *input = "'foo '(1 2 3)";
+
+    Token expectedTokens[] = {
+        {QUOTE, "'"},   {IDENTIFIER, "foo"}, {QUOTE, "'"},
+        {LPAREN, "("},  {INTEGER, "1"},      {INTEGER, "2"},
+        {INTEGER, "3"}, {RPAREN, ")"},       {TOKEN_EOF, ""},
+    };
+
+    testTokens(input, expectedTokens);
+}
+
+void test_consecutive_expressions() {
+    char *input = "(+ 1 2)(- 3 4)";
+
+    Token expectedTokens[] = {
+        {LPAREN, "("},  {PLUS, "+"},   {INTEGER, "1"},  {INTEGER, "2"},
+        {RPAREN, ")"},  {LPAREN, "("}, {MINUS, "-"},    {INTEGER, "3"},
+        {INTEGER, "4"}, {RPAREN, ")"}, {TOKEN_EOF, ""},
+    };
+
+    testTokens(input, expectedTokens);
+}
+
+void test_empty_string() {
+    char *input = "\"\"";
+
+    Token expectedTokens[] = {
+        {STRING_DOUBLE, ""},
+        {TOKEN_EOF, ""},
+    };
+
+    testTokens(input, expectedTokens);
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_single_symbol);
@@ -217,5 +300,12 @@ int main() {
     RUN_TEST(test_multiline_comment_between_code);
     RUN_TEST(test_array);
     RUN_TEST(test_types);
+    RUN_TEST(test_negative_numbers);
+    RUN_TEST(test_nested_sexpr);
+    RUN_TEST(test_empty_list);
+    RUN_TEST(test_hyphenated_identifier);
+    RUN_TEST(test_quote_shorthand);
+    RUN_TEST(test_consecutive_expressions);
+    RUN_TEST(test_empty_string);
     return UNITY_END();
 }
