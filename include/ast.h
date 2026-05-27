@@ -5,13 +5,13 @@ typedef struct {
 } ReturnStatement;
 
 typedef struct {
-  enum StatementType type;
-  union {
-    ReturnStatement return_statement;
-  };
+    enum StatementType type;
+    union {
+        ReturnStatement return_statement;
+    };
 } Statement;
 
 typedef struct {
-  Statement *statements;
-  int numStatements;
+    Statement *statements;
+    int numStatements;
 } AST;

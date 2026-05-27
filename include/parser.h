@@ -2,7 +2,7 @@
 #include "lexer.h"
 
 typedef struct {
-  Lexer *lexer;
+    Lexer *lexer;
 } Parser;
 
 Parser *newParser(Lexer *l);

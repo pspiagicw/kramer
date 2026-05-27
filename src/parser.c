@@ -2,11 +2,11 @@
 #include <stdlib.h>
 
 Parser *newParser(Lexer *l) {
-  Parser *p = malloc(sizeof(Parser));
+    Parser *p = malloc(sizeof(Parser));
 
-  p->lexer = l;
+    p->lexer = l;
 
-  return p;
+    return p;
 }
 
 AST *parser_parse(Parser *p) { return malloc(sizeof(AST)); }
