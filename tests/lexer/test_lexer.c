@@ -13,7 +13,7 @@ void testTokens(char *input, Token *expectedTokens) {
         Token *actualToken = lexer_next(l);
         Token expectedToken = expectedTokens[counter];
 
-        TEST_ASSERT_EQUAL_INT(expectedToken.Type, actualToken->Type);
+        TEST_ASSERT_EQUAL_STRING(token_type_name(expectedToken.Type), token_type_name(actualToken->Type));
         TEST_ASSERT_EQUAL_STRING(expectedToken.Value, actualToken->Value);
 
         counter += 1;
