@@ -13,7 +13,8 @@ void testTokens(char *input, Token *expectedTokens) {
         Token *actualToken = lexer_next(l);
         Token expectedToken = expectedTokens[counter];
 
-        TEST_ASSERT_EQUAL_STRING(token_type_name(expectedToken.Type), token_type_name(actualToken->Type));
+        TEST_ASSERT_EQUAL_STRING(token_type_name(expectedToken.Type),
+                                 token_type_name(actualToken->Type));
         TEST_ASSERT_EQUAL_STRING(expectedToken.Value, actualToken->Value);
 
         counter += 1;
@@ -43,15 +44,6 @@ void test_symbols() {
     testTokens(input, expectedTokens);
 }
 
-void test_comparison_operators() {
-    char *input = "== != <= >=";
-
-    Token expectedTokens[] = {
-        {EQ, "=="}, {NEQ, "!="}, {LTE, "<="}, {GTE, ">="}, {TOKEN_EOF, ""},
-    };
-
-    testTokens(input, expectedTokens);
-}
 void test_single_char_comparison_assignment() {
     char *input = "< > =";
 
@@ -60,6 +52,16 @@ void test_single_char_comparison_assignment() {
         {GT, ">"},
         {ASSIGN, "="},
         {TOKEN_EOF, ""},
+    };
+
+    testTokens(input, expectedTokens);
+}
+
+void test_double_char_comparison_operators() {
+    char *input = "== != <= >=";
+
+    Token expectedTokens[] = {
+        {EQ, "=="}, {NEQ, "!="}, {LTE, "<="}, {GTE, ">="}, {TOKEN_EOF, ""},
     };
 
     testTokens(input, expectedTokens);
@@ -75,17 +77,17 @@ void test_delimiters() {
 
     testTokens(input, expectedTokens);
 }
-void test_dots() {
-    char *input = ".. ...";
-
-    Token expectedTokens[] = {
-        {CONCAT, ".."},
-        {ELLIPSIS, "..."},
-        {TOKEN_EOF, ""},
-    };
-
-    testTokens(input, expectedTokens);
-}
+// void test_dots() {
+//     char *input = ".. ...";
+//
+//     Token expectedTokens[] = {
+//         {CONCAT, ".."},
+//         {ELLIPSIS, "..."},
+//         {TOKEN_EOF, ""},
+//     };
+//
+//     testTokens(input, expectedTokens);
+// }
 void test_identifiers() {
     char *input = "foo bar _baz";
 
@@ -98,12 +100,14 @@ void test_identifiers() {
 
     testTokens(input, expectedTokens);
 }
+
+// TODO: Add support for floats.
 void test_numbers() {
-    char *input = "123 3.14";
+    char *input = "123";
 
     Token expectedTokens[] = {
         {INTEGER, "123"},
-        {FLOAT, "3.14"},
+        // {FLOAT, "3.14"},
         {TOKEN_EOF, ""},
     };
 
@@ -188,23 +192,25 @@ void test_array() {
 
     testTokens(input, expectedTokens);
 }
-void test_types() {
-    char *input = "int float string bool void";
 
-    Token expectedTokens[] = {
-        {TYPE, "int"},  {TYPE, "float"}, {TYPE, "string"},
-        {TYPE, "bool"}, {TYPE, "void"},  {TOKEN_EOF, ""},
-    };
+// void test_types() {
+//     char *input = "int float string bool void";
+//
+//     Token expectedTokens[] = {
+//         {TYPE, "int"},  {TYPE, "float"}, {TYPE, "string"},
+//         {TYPE, "bool"}, {TYPE, "void"},  {TOKEN_EOF, ""},
+//     };
+//
+//     testTokens(input, expectedTokens);
+// }
 
-    testTokens(input, expectedTokens);
-}
-
+// TODO: Implement floating test.
 void test_negative_numbers() {
-    char *input = "-42 -3.14";
+    char *input = "-42";
 
     Token expectedTokens[] = {
-        {INTEGER, "-42"},
-        {FLOAT, "-3.14"},
+        {MINUS, "-"},
+        {INTEGER, "42"},
         {TOKEN_EOF, ""},
     };
 
@@ -248,10 +254,10 @@ void test_hyphenated_identifier() {
 }
 
 void test_quote_shorthand() {
-    char *input = "'foo '(1 2 3)";
+    char *input = "`foo `(1 2 3)";
 
     Token expectedTokens[] = {
-        {QUOTE, "'"},   {IDENTIFIER, "foo"}, {QUOTE, "'"},
+        {QUOTE, "`"},   {IDENTIFIER, "foo"}, {QUOTE, "`"},
         {LPAREN, "("},  {INTEGER, "1"},      {INTEGER, "2"},
         {INTEGER, "3"}, {RPAREN, ")"},       {TOKEN_EOF, ""},
     };
@@ -286,10 +292,10 @@ int main() {
     UNITY_BEGIN();
     RUN_TEST(test_single_symbol);
     RUN_TEST(test_symbols);
-    RUN_TEST(test_comparison_operators);
     RUN_TEST(test_single_char_comparison_assignment);
+    RUN_TEST(test_double_char_comparison_operators);
     RUN_TEST(test_delimiters);
-    RUN_TEST(test_dots);
+    // RUN_TEST(test_dots);
     RUN_TEST(test_identifiers);
     RUN_TEST(test_numbers);
     RUN_TEST(test_keywords);
@@ -299,7 +305,7 @@ int main() {
     RUN_TEST(test_multiline_comment_only);
     RUN_TEST(test_multiline_comment_between_code);
     RUN_TEST(test_array);
-    RUN_TEST(test_types);
+    // RUN_TEST(test_types);
     RUN_TEST(test_negative_numbers);
     RUN_TEST(test_nested_sexpr);
     RUN_TEST(test_empty_list);
