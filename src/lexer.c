@@ -157,7 +157,8 @@ Token *lexer_next(Lexer *l) {
 
         } else if (is_digit(curChar)) {
             char *value = lexer_number(l);
-            tok = newTokenFromValue(INTEGER, value);
+            enum TokenType t = strchr(value, '.') ? FLOAT : INTEGER;
+            tok = newTokenFromValue(t, value);
             lexer_retreat(l);
         } else {
             tok = newToken(TOKEN_INVALID, "", 0, 0);
@@ -222,6 +223,13 @@ char *lexer_number(Lexer *l) {
 
     while (!l->isEOF && is_digit(l->input[l->curPos])) {
         lexer_advance(l);
+    }
+
+    if (!l->isEOF && l->input[l->curPos] == '.' && is_digit(lexer_peek(l))) {
+        lexer_advance(l);
+        while (!l->isEOF && is_digit(l->input[l->curPos])) {
+            lexer_advance(l);
+        }
     }
 
     int end = l->curPos;

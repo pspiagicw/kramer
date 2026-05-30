@@ -101,17 +101,37 @@ void test_identifiers() {
     testTokens(input, expectedTokens);
 }
 
-// TODO: Add support for floats.
 void test_numbers() {
-    char *input = "123";
+    char *input = "123 3.14";
 
     Token expectedTokens[] = {
         {INTEGER, "123"},
-        // {FLOAT, "3.14"},
+        {FLOAT, "3.14"},
         {TOKEN_EOF, ""},
     };
 
     testTokens(input, expectedTokens);
+}
+
+void test_float_edge_cases() {
+    char *input = "0.5";
+
+    Token expectedTokens[] = {
+        {FLOAT, "0.5"},
+        {TOKEN_EOF, ""},
+    };
+
+    testTokens(input, expectedTokens);
+
+    char *input2 = "3.";
+
+    Token expectedTokens2[] = {
+        {INTEGER, "3"},
+        {DOT, "."},
+        {TOKEN_EOF, ""},
+    };
+
+    testTokens(input2, expectedTokens2);
 }
 void test_keywords() {
     char *input = "if else return fn end let not and or then";
@@ -206,12 +226,11 @@ void test_array() {
 
 // TODO: Implement floating test.
 void test_negative_numbers() {
-    char *input = "-42";
+    char *input = "-42 -3.14";
 
     Token expectedTokens[] = {
-        {MINUS, "-"},
-        {INTEGER, "42"},
-        {TOKEN_EOF, ""},
+        {MINUS, "-"},    {INTEGER, "42"}, {MINUS, "-"},
+        {FLOAT, "3.14"}, {TOKEN_EOF, ""},
     };
 
     testTokens(input, expectedTokens);
@@ -298,6 +317,7 @@ int main() {
     // RUN_TEST(test_dots);
     RUN_TEST(test_identifiers);
     RUN_TEST(test_numbers);
+    RUN_TEST(test_float_edge_cases);
     RUN_TEST(test_keywords);
     RUN_TEST(test_literals);
     RUN_TEST(test_strings);
