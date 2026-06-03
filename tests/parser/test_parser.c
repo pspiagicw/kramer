@@ -8,18 +8,39 @@ void testParser(char *input, char *expected) {
     Lexer *l = newLexer(input);
     Parser *p = newParser(l);
 
-    AST *ast = parser_parse(p);
+    parser_parse(p);
+    Error *errs = parser_errors(p);
+    if (p->numErrors != 0) {
+        fprintf(stderr, "Parser had some errors\n");
+
+        for (int i = 0; i < p->numErrors; i++) {
+            fprintf(stderr, "Parser Error: %s\n", errs[i].Value);
+        }
+
+        TEST_FAIL_MESSAGE("Parser had errors!");
+    }
+    AST *ast = parser_ast(p);
 
     char *result = ast_to_string(ast);
 
     TEST_ASSERT_EQUAL_STRING(expected, result);
 }
 
-void test_simple() {
+void test_int_expression() {
+    char *input = "1";
+    char *expected = "1";
+    testParser(input, expected);
+}
+
+void test_empty_input() {
+    char *input = "";
+    char *expected = "";
+    testParser(input, expected);
+}
+
+void test_return_statement() {
     char *input = "(return 1)";
-
     char *expected = "(return 1)";
-
     testParser(input, expected);
 }
 
@@ -65,12 +86,6 @@ void test_if_else_statement() {
     testParser(input, expected);
 }
 
-void test_return_statement() {
-    char *input = "(return 1)";
-    char *expected = "(return 1)";
-    testParser(input, expected);
-}
-
 void test_expression_statement() {
     char *input = "1";
     char *expected = "1";
@@ -109,6 +124,7 @@ void test_nested_function_call() {
 
 int main() {
     UNITY_BEGIN();
-    RUN_TEST(test_simple);
+    RUN_TEST(test_empty_input);
+    RUN_TEST(test_int_expression);
     return UNITY_END();
 }
