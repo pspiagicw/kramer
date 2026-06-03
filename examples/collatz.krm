@@ -1,0 +1,18 @@
+(fn collatz (n)
+  (if (== n 1)
+    (print 1)
+    (do
+      (print n)
+      (if (== (% n 2) 0)
+        (collatz (/ n 2))
+        (collatz (+ (* 3 n) 1))))))
+
+(fn collatz_length (n acc)
+  (if (== n 1)
+    (+ acc 1)
+    (if (== (% n 2) 0)
+      (collatz_length (/ n 2) (+ acc 1))
+      (collatz_length (+ (* 3 n) 1) (+ acc 1)))))
+
+(collatz 27)
+(print (collatz_length 27 0))

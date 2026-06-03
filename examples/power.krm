@@ -1,0 +1,9 @@
+(fn power (base exp)
+  (if (== exp 0)
+    1
+    (* base (power base (- exp 1)))))
+
+(print (power 2 0))
+(print (power 2 10))
+(print (power 3 4))
+(print (power 10 3))

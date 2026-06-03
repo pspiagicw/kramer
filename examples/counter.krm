@@ -1,0 +1,21 @@
+(let count 0)
+
+(fn increment ()
+  (set count (+ count 1)))
+
+(fn decrement ()
+  (set count (- count 1)))
+
+(fn reset ()
+  (set count 0))
+
+(increment)
+(increment)
+(increment)
+(print count)
+
+(decrement)
+(print count)
+
+(reset)
+(print count)

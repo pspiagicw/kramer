@@ -1,0 +1,16 @@
+(fn fizzbuzz (n)
+  (if (== (% n 15) 0)
+    "FizzBuzz"
+    (if (== (% n 3) 0)
+      "Fizz"
+      (if (== (% n 5) 0)
+        "Buzz"
+        n))))
+
+(fn run (i limit)
+  (if (<= i limit)
+    (do
+      (print (fizzbuzz i))
+      (run (+ i 1) limit))))
+
+(run 1 20)

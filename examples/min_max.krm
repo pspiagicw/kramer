@@ -1,0 +1,27 @@
+(fn min (a b)
+  (if (< a b) a b))
+
+(fn max (a b)
+  (if (> a b) a b))
+
+(fn min3 (a b c)
+  (min a (min b c)))
+
+(fn max3 (a b c)
+  (max a (max b c)))
+
+(fn clamp (x low high)
+  (max low (min x high)))
+
+(print (min 3 7))
+(print (min 9 2))
+
+(print (max 3 7))
+(print (max 9 2))
+
+(print (min3 5 2 8))
+(print (max3 5 2 8))
+
+(print (clamp 5 1 10))
+(print (clamp 15 1 10))
+(print (clamp (- 0 3) 1 10))

@@ -1,0 +1,19 @@
+(fn greet (name)
+  (.. "Hello, " (.. name "!")))
+
+(fn repeat_str (s n)
+  (if (== n 0)
+    ""
+    (.. s (repeat_str s (- n 1)))))
+
+(fn join (a sep b)
+  (.. a (.. sep b)))
+
+(print (greet "Alice"))
+(print (greet "World"))
+
+(print (repeat_str "ha" 3))
+(print (repeat_str "-" 10))
+
+(print (join "foo" ", " "bar"))
+(print (join "hello" " " "world"))

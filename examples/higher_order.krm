@@ -1,0 +1,16 @@
+(fn apply (f x)
+  (f x))
+
+(fn compose (f g)
+  (fn (x) (f (g x))))
+
+(fn double (x) (* x 2))
+(fn square (x) (* x x))
+(fn negate (x) (- 0 x))
+
+(print (apply double 5))
+(print (apply square 4))
+(print (apply negate 7))
+
+(let double_then_square (compose square double))
+(print (double_then_square 3))
