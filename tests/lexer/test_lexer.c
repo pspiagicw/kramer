@@ -1,5 +1,6 @@
 #include "lexer.h"
 #include "unity.h"
+#include <string.h>
 
 void setUp() {}
 void tearDown() {}
@@ -307,31 +308,50 @@ void test_empty_string() {
     testTokens(input, expectedTokens);
 }
 
-int main() {
+typedef void (*TestFn)(void);
+typedef struct { const char *name; TestFn fn; } TestEntry;
+
+static const TestEntry LEXER_TESTS[] = {
+    {"test_single_symbol",                   test_single_symbol},
+    {"test_symbols",                         test_symbols},
+    {"test_single_char_comparison_assignment", test_single_char_comparison_assignment},
+    {"test_double_char_comparison_operators", test_double_char_comparison_operators},
+    {"test_delimiters",                      test_delimiters},
+    {"test_identifiers",                     test_identifiers},
+    {"test_numbers",                         test_numbers},
+    {"test_float_edge_cases",                test_float_edge_cases},
+    {"test_keywords",                        test_keywords},
+    {"test_literals",                        test_literals},
+    {"test_strings",                         test_strings},
+    {"test_single_line_comment_only",        test_single_line_comment_only},
+    {"test_multiline_comment_only",          test_multiline_comment_only},
+    {"test_multiline_comment_between_code",  test_multiline_comment_between_code},
+    {"test_array",                           test_array},
+    {"test_negative_numbers",                test_negative_numbers},
+    {"test_nested_sexpr",                    test_nested_sexpr},
+    {"test_empty_list",                      test_empty_list},
+    {"test_hyphenated_identifier",           test_hyphenated_identifier},
+    {"test_quote_shorthand",                 test_quote_shorthand},
+    {"test_consecutive_expressions",         test_consecutive_expressions},
+    {"test_empty_string",                    test_empty_string},
+};
+
+#define NUM_LEXER_TESTS (sizeof(LEXER_TESTS) / sizeof(LEXER_TESTS[0]))
+
+int main(int argc, char *argv[]) {
     UNITY_BEGIN();
-    RUN_TEST(test_single_symbol);
-    RUN_TEST(test_symbols);
-    RUN_TEST(test_single_char_comparison_assignment);
-    RUN_TEST(test_double_char_comparison_operators);
-    RUN_TEST(test_delimiters);
-    // RUN_TEST(test_dots);
-    RUN_TEST(test_identifiers);
-    RUN_TEST(test_numbers);
-    RUN_TEST(test_float_edge_cases);
-    RUN_TEST(test_keywords);
-    RUN_TEST(test_literals);
-    RUN_TEST(test_strings);
-    RUN_TEST(test_single_line_comment_only);
-    RUN_TEST(test_multiline_comment_only);
-    RUN_TEST(test_multiline_comment_between_code);
-    RUN_TEST(test_array);
-    // RUN_TEST(test_types);
-    RUN_TEST(test_negative_numbers);
-    RUN_TEST(test_nested_sexpr);
-    RUN_TEST(test_empty_list);
-    RUN_TEST(test_hyphenated_identifier);
-    RUN_TEST(test_quote_shorthand);
-    RUN_TEST(test_consecutive_expressions);
-    RUN_TEST(test_empty_string);
+    if (argc >= 2) {
+        for (size_t i = 0; i < NUM_LEXER_TESTS; i++) {
+            if (strcmp(argv[1], LEXER_TESTS[i].name) == 0) {
+                UnityDefaultTestRun(LEXER_TESTS[i].fn, LEXER_TESTS[i].name, 0);
+                return UNITY_END();
+            }
+        }
+        fprintf(stderr, "Unknown test: %s\n", argv[1]);
+        return 1;
+    }
+    for (size_t i = 0; i < NUM_LEXER_TESTS; i++) {
+        UnityDefaultTestRun(LEXER_TESTS[i].fn, LEXER_TESTS[i].name, 0);
+    }
     return UNITY_END();
 }
