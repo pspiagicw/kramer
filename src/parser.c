@@ -9,7 +9,10 @@ Parser *newParser(Lexer *l) {
 
     p->lexer = l;
     p->ast = malloc(sizeof(AST));
-    p->ast->statements = malloc(sizeof(Statement *) * 10);
+    p->ast->statements = NULL;
+    p->ast->numStatements = 0;
+    p->errors = NULL;
+    p->numErrors = 0;
     p->peek_token = lexer_next(p->lexer);
 
     parser_advance(p);
