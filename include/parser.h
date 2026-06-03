@@ -30,5 +30,7 @@ Expression *parse_integer(Parser *p);
 Expression *parse_expression(Parser *p);
 
 void parse_expression_statement(Parser *P);
+void parse_return_statement(Parser *p);
 
 AST *parser_ast(Parser *p);
+void parser_expect(Parser *p, enum TokenType token_type);

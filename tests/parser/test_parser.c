@@ -126,5 +126,6 @@ int main() {
     UNITY_BEGIN();
     RUN_TEST(test_empty_input);
     RUN_TEST(test_int_expression);
+    RUN_TEST(test_return_statement);
     return UNITY_END();
 }

@@ -14,7 +14,7 @@ typedef struct {
 } Expression;
 
 typedef struct {
-    Expression *expression;
+    Expression *value;
 } ReturnStatement;
 
 typedef struct {

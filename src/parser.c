@@ -29,6 +29,7 @@ void parser_parse(Parser *p) {
         switch (p->cur_token->Type) {
         case LPAREN:
             parse_statement(p);
+            break;
         default:
             parse_expression_statement(p);
         }
@@ -44,6 +45,29 @@ void parse_expression_statement(Parser *p) {
     add_statement(p->ast, s);
 }
 
+void parse_return_statement(Parser *p) {
+    Statement *s = malloc(sizeof(Statement));
+    s->type = RETURN_STATEMENT;
+    s->return_statement = malloc(sizeof(ReturnStatement));
+
+    // Move over the return token.
+    parser_advance(p);
+
+    s->return_statement->value = parse_expression(p);
+
+    parser_expect(p, RPAREN);
+
+    add_statement(p->ast, s);
+}
+
+void parser_expect(Parser *p, enum TokenType token_type) {
+    if (p->cur_token->Type != token_type) {
+        parser_error(p, "Expected %s, got %s", token_type_name(token_type),
+                     token_type_name(p->cur_token->Type));
+    }
+    parser_advance(p);
+}
+
 Expression *parse_integer(Parser *p) {
     IntegerExpression *i = malloc(sizeof(IntegerExpression));
     i->value = atoi(p->cur_token->Value);
@@ -57,15 +81,25 @@ Expression *parse_integer(Parser *p) {
     return e;
 }
 
-void parse_statement(Parser *p) { parser_advance(p); }
+void parse_statement(Parser *p) {
+    parser_advance(p);
+
+    switch (p->cur_token->Type) {
+    case RETURN:
+        parse_return_statement(p);
+        break;
+    default:
+        parser_error(p, "No statement can be parsed with %s",
+                     p->cur_token->Value);
+    }
+}
 
 Expression *parse_expression(Parser *p) {
     switch (p->cur_token->Type) {
     case INTEGER:
         return parse_integer(p);
-
     default:
-        parser_error(p, "No statement can be parsed with %s",
+        parser_error(p, "No expression can be parsed with %s",
                      p->cur_token->Value);
         parser_advance(p);
     }

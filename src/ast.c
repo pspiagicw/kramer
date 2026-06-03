@@ -25,7 +25,7 @@ char *expression_to_string(Expression *expr) {
 char *return_statement_to_string(ReturnStatement *rs) {
     StrBuf *sb = strbuf_new();
     strbuf_append(sb, "(return ");
-    char *expr_str = expression_to_string(rs->expression);
+    char *expr_str = expression_to_string(rs->value);
     strbuf_append(sb, expr_str);
     free(expr_str);
     strbuf_append(sb, ")");
