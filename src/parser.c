@@ -76,11 +76,91 @@ Expression *parse_integer(Parser *p) {
     i->value = atoi(p->cur_token->Value);
 
     Expression *e = malloc(sizeof(Expression));
+    e->type = EXPR_INTEGER;
 
     e->integer_expression = i;
 
     parser_advance(p);
 
+    return e;
+}
+
+Expression *parse_float(Parser *p) {
+    FloatExpression *f = malloc(sizeof(FloatExpression));
+    f->value = atof(p->cur_token->Value);
+
+    Expression *e = malloc(sizeof(Expression));
+    e->type = EXPR_FLOAT;
+
+    e->float_expression = f;
+
+    parser_advance(p);
+
+    return e;
+}
+
+Expression *parse_bool(Parser *p) {
+    BoolExpression *b = malloc(sizeof(BoolExpression));
+
+    switch (p->cur_token->Type) {
+    case TRUE:
+        b->value = true;
+        break;
+    case FALSE:
+        b->value = false;
+        break;
+    default:
+        parser_error(p, "Invalid bool type!, got %s",
+                     token_type_name(p->cur_token->Type));
+    }
+
+    Expression *e = malloc(sizeof(Expression));
+    e->type = EXPR_BOOL;
+
+    e->bool_expression = b;
+    parser_advance(p);
+
+    return e;
+}
+
+Expression *parse_identifier(Parser *p) {
+    IdentifierExpression *i = malloc(sizeof(IdentifierExpression));
+    i->value = p->cur_token->Value;
+
+    Expression *e = malloc(sizeof(Expression));
+    e->type = EXPR_IDENT;
+
+    e->identifier_expression = i;
+    parser_advance(p);
+
+    return e;
+}
+
+Expression *parse_string(Parser *p) {
+    StringExpression *s = malloc(sizeof(StringExpression));
+    s->value = p->cur_token->Value;
+
+    switch (p->cur_token->Type) {
+    case STRING_SINGLE:
+        s->Type = SINGLE;
+        break;
+    case STRING_DOUBLE:
+        s->Type = DOUBLE;
+        break;
+    case STRING_MULTILINE:
+        s->Type = MULTILINE;
+        break;
+    default:
+        parser_error(p, "Invalid string type! got %s",
+                     token_type_name(p->cur_token->Type));
+    }
+
+    Expression *e = malloc(sizeof(Expression));
+    e->type = EXPR_STRING;
+
+    e->string_expression = s;
+
+    parser_advance(p);
     return e;
 }
 
@@ -101,6 +181,17 @@ Expression *parse_expression(Parser *p) {
     switch (p->cur_token->Type) {
     case INTEGER:
         return parse_integer(p);
+    case FLOAT:
+        return parse_float(p);
+    case STRING_DOUBLE:
+    case STRING_MULTILINE:
+    case STRING_SINGLE:
+        return parse_string(p);
+    case TRUE:
+    case FALSE:
+        return parse_bool(p);
+    case IDENTIFIER:
+        return parse_identifier(p);
     default:
         parser_error(p, "No expression can be parsed with %s",
                      p->cur_token->Value);

@@ -25,7 +25,12 @@ void parser_error(Parser *p, const char *fmt, ...);
 Error *parser_errors(Parser *p);
 
 void parse_statement(Parser *p);
+
 Expression *parse_integer(Parser *p);
+Expression *parse_float(Parser *p);
+Expression *parse_string(Parser *p);
+Expression *parse_bool(Parser *p);
+Expression *parse_identifier(Parser *p);
 
 Expression *parse_expression(Parser *p);
 

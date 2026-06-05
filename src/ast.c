@@ -2,6 +2,7 @@
 #include "strbuf.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 void add_statement(AST *ast, Statement *statement) {
     ast->statements =
@@ -10,15 +11,70 @@ void add_statement(AST *ast, Statement *statement) {
 }
 
 char *expression_to_string(Expression *expr) {
-    StrBuf *sb = strbuf_new();
     switch (expr->type) {
-    case EXPR_INTEGER: {
-        char buf[32];
-        snprintf(buf, sizeof(buf), "%d", expr->integer_expression->value);
-        strbuf_append(sb, buf);
+    case EXPR_INTEGER:
+        return integer_to_string(expr->integer_expression);
+    case EXPR_FLOAT:
+        return float_to_string(expr->float_expression);
+    case EXPR_STRING:
+        return string_to_string(expr->string_expression);
+    case EXPR_BOOL:
+        return bool_to_string(expr->bool_expression);
+    case EXPR_IDENT:
+        return identifier_to_string(expr->identifier_expression);
+    default:
+        return "";
+    }
+}
+
+char *integer_to_string(IntegerExpression *expr) {
+    StrBuf *sb = strbuf_new();
+    char buf[32];
+    snprintf(buf, sizeof(buf), "%d", expr->value);
+    strbuf_append(sb, buf);
+    return strbuf_done(sb);
+}
+
+char *float_to_string(FloatExpression *expr) {
+    StrBuf *sb = strbuf_new();
+    char buf[32];
+    snprintf(buf, sizeof(buf), "%.1f", expr->value);
+    strbuf_append(sb, buf);
+    return strbuf_done(sb);
+}
+
+char *string_to_string(StringExpression *expr) {
+    StrBuf *sb = strbuf_new();
+    int length = strlen(expr->value);
+    char buf[length + 10];
+
+    switch (expr->Type) {
+    case SINGLE:
+        snprintf(buf, sizeof(buf), "'%s'", expr->value);
+        break;
+    case DOUBLE:
+        snprintf(buf, sizeof(buf), "\"%s\"", expr->value);
+        break;
+    case MULTILINE:
+        snprintf(buf, sizeof(buf), "[[%s]]", expr->value);
         break;
     }
-    }
+
+    strbuf_append(sb, buf);
+    return strbuf_done(sb);
+}
+
+char *bool_to_string(BoolExpression *expr) {
+    StrBuf *sb = strbuf_new();
+    char buf[32];
+    snprintf(buf, sizeof(buf), "%s", expr->value ? "true" : "false");
+    strbuf_append(sb, buf);
+    return strbuf_done(sb);
+}
+
+char *identifier_to_string(IdentifierExpression *expr) {
+    StrBuf *sb = strbuf_new();
+    strbuf_append(sb, expr->value);
     return strbuf_done(sb);
 }
 
