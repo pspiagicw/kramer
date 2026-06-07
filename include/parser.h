@@ -8,8 +8,11 @@ typedef struct {
 typedef struct {
     Lexer *lexer;
     AST *ast;
+    Token *prev_token;
     Token *cur_token;
     Token *peek_token;
+    Token *stashed_token;
+    bool retreated;
 
     Error *errors;
     int numErrors;
@@ -19,6 +22,7 @@ Parser *newParser(Lexer *l);
 void parser_parse(Parser *p);
 
 void parser_advance(Parser *p);
+void parser_retreat(Parser *p);
 void parser_peek(Parser *p);
 
 void parser_error(Parser *p, const char *fmt, ...);
@@ -33,6 +37,8 @@ Expression *parse_bool(Parser *p);
 Expression *parse_identifier(Parser *p);
 
 Expression *parse_expression(Parser *p);
+
+Expression *parse_call(Parser *p);
 
 void parse_expression_statement(Parser *P);
 void parse_return_statement(Parser *p);

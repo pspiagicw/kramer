@@ -1,5 +1,4 @@
 #include "parser.h"
-#include "strbuf.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,6 +12,9 @@ Parser *newParser(Lexer *l) {
     p->ast->numStatements = 0;
     p->errors = NULL;
     p->numErrors = 0;
+    p->prev_token = NULL;
+    p->stashed_token = NULL;
+    p->retreated = false;
     p->peek_token = lexer_next(p->lexer);
 
     parser_advance(p);
@@ -23,8 +25,23 @@ Parser *newParser(Lexer *l) {
 AST *parser_ast(Parser *p) { return p->ast; }
 
 void parser_advance(Parser *p) {
+    p->prev_token = p->cur_token;
     p->cur_token = p->peek_token;
-    p->peek_token = lexer_next(p->lexer);
+    if (p->retreated) {
+        p->peek_token = p->stashed_token;
+        p->stashed_token = NULL;
+        p->retreated = false;
+    } else {
+        p->peek_token = lexer_next(p->lexer);
+    }
+}
+
+void parser_retreat(Parser *p) {
+    p->stashed_token = p->peek_token;
+    p->peek_token = p->cur_token;
+    p->cur_token = p->prev_token;
+    p->prev_token = NULL;
+    p->retreated = true;
 }
 
 void parser_parse(Parser *p) {
@@ -164,6 +181,34 @@ Expression *parse_string(Parser *p) {
     return e;
 }
 
+Expression *parse_call(Parser *p) {
+    // Move over (
+    parser_advance(p);
+
+    CallExpression *c = malloc(sizeof(CallExpression));
+    c->caller = p->cur_token;
+
+    // Move over the call ident.
+    parser_advance(p);
+
+    c->argumentNum = 0;
+    c->argumentList = malloc(sizeof(Expression **));
+
+    while (p->cur_token->Type != RPAREN) {
+        add_argument_to_call(c, parse_expression(p));
+    }
+
+    // Move over the )
+    parser_advance(p);
+
+    Expression *e = malloc(sizeof(Expression));
+    e->type = EXPR_CALL;
+
+    e->call_expression = c;
+
+    return e;
+}
+
 void parse_statement(Parser *p) {
     parser_advance(p);
 
@@ -171,9 +216,30 @@ void parse_statement(Parser *p) {
     case RETURN:
         parse_return_statement(p);
         break;
+    case IDENTIFIER:
+    case MINUS:
+    case MULTIPLY:
+    case DIVIDE:
+    case MODULO:
+    case EQ:
+    case NEQ:
+    case LT:
+    case GT:
+    case LTE:
+    case GTE:
+    case AND:
+    case OR:
+    case NOT:
+    case PLUS:
+        // It's a call expression statement now!
+        parser_retreat(p);
+        // Now expression statement will take (..) as expression.
+        parse_expression_statement(p);
+        break;
     default:
         parser_error(p, "No statement can be parsed with %s",
                      p->cur_token->Value);
+        parser_advance(p);
     }
 }
 
@@ -192,6 +258,8 @@ Expression *parse_expression(Parser *p) {
         return parse_bool(p);
     case IDENTIFIER:
         return parse_identifier(p);
+    case LPAREN:
+        return parse_call(p);
     default:
         parser_error(p, "No expression can be parsed with %s",
                      p->cur_token->Value);

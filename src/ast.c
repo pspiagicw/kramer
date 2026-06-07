@@ -10,6 +10,12 @@ void add_statement(AST *ast, Statement *statement) {
     ast->statements[ast->numStatements++] = *statement;
 }
 
+void add_argument_to_call(CallExpression *c, Expression *argument) {
+    c->argumentList =
+        realloc(c->argumentList, (c->argumentNum + 1) * sizeof(Expression *));
+    c->argumentList[c->argumentNum++] = argument;
+}
+
 char *expression_to_string(Expression *expr) {
     switch (expr->type) {
     case EXPR_INTEGER:
@@ -22,6 +28,8 @@ char *expression_to_string(Expression *expr) {
         return bool_to_string(expr->bool_expression);
     case EXPR_IDENT:
         return identifier_to_string(expr->identifier_expression);
+    case EXPR_CALL:
+        return call_to_string(expr->call_expression);
     default:
         return "";
     }
@@ -75,6 +83,20 @@ char *bool_to_string(BoolExpression *expr) {
 char *identifier_to_string(IdentifierExpression *expr) {
     StrBuf *sb = strbuf_new();
     strbuf_append(sb, expr->value);
+    return strbuf_done(sb);
+}
+
+char *call_to_string(CallExpression *expr) {
+    StrBuf *sb = strbuf_new();
+    strbuf_append(sb, "(");
+    strbuf_append(sb, expr->caller->Value);
+    for (int i = 0; i < expr->argumentNum; i++) {
+        strbuf_append(sb, " ");
+        char *arg = expression_to_string(expr->argumentList[i]);
+        strbuf_append(sb, arg);
+        free(arg);
+    }
+    strbuf_append(sb, ")");
     return strbuf_done(sb);
 }
 

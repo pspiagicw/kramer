@@ -1,3 +1,5 @@
+#pragma once
+
 #include "token.h"
 #include <stdbool.h>
 
