@@ -40,8 +40,13 @@ Expression *parse_expression(Parser *p);
 
 Expression *parse_call(Parser *p);
 
+Expression *parse_if_expression(Parser *p);
+
+Expression *parse_lparen_expression(Parser *p);
+
 void parse_expression_statement(Parser *P);
 void parse_return_statement(Parser *p);
+void parse_let_statement(Parser *p);
 
 AST *parser_ast(Parser *p);
-void parser_expect(Parser *p, enum TokenType token_type);
+Token *parser_expect(Parser *p, enum TokenType token_type);

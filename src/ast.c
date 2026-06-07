@@ -30,6 +30,8 @@ char *expression_to_string(Expression *expr) {
         return identifier_to_string(expr->identifier_expression);
     case EXPR_CALL:
         return call_to_string(expr->call_expression);
+    case EXPR_IF:
+        return if_to_string(expr->if_expression);
     default:
         return "";
     }
@@ -100,6 +102,26 @@ char *call_to_string(CallExpression *expr) {
     return strbuf_done(sb);
 }
 
+char *if_to_string(IfExpression *expr) {
+    StrBuf *sb = strbuf_new();
+    strbuf_append(sb, "(if ");
+    char *cond = expression_to_string(expr->cond);
+    strbuf_append(sb, cond);
+    free(cond);
+    strbuf_append(sb, " ");
+    char *cons = expression_to_string(expr->consequence);
+    strbuf_append(sb, cons);
+    free(cons);
+    if (expr->alternative != NULL) {
+        strbuf_append(sb, " ");
+        char *alt = expression_to_string(expr->alternative);
+        strbuf_append(sb, alt);
+        free(alt);
+    }
+    strbuf_append(sb, ")");
+    return strbuf_done(sb);
+}
+
 char *return_statement_to_string(ReturnStatement *rs) {
     StrBuf *sb = strbuf_new();
     strbuf_append(sb, "(return ");
@@ -107,6 +129,18 @@ char *return_statement_to_string(ReturnStatement *rs) {
     strbuf_append(sb, expr_str);
     free(expr_str);
     strbuf_append(sb, ")");
+    return strbuf_done(sb);
+}
+
+char *let_statement_to_string(LetStatement *let) {
+    StrBuf *sb = strbuf_new();
+    strbuf_append(sb, "(let ");
+    char *name_str = let->name->Value;
+    strbuf_append(sb, name_str);
+    strbuf_append(sb, " ");
+    strbuf_append(sb, expression_to_string(let->Value));
+    strbuf_append(sb, ")");
+
     return strbuf_done(sb);
 }
 
@@ -120,6 +154,10 @@ char *ast_to_string(AST *ast) {
     for (int i = 0; i < ast->numStatements; i++) {
         Statement *statement = &ast->statements[i];
 
+        if (i != 0 && i < ast->numStatements) {
+            strbuf_append(sb, " ");
+        }
+
         switch (statement->type) {
         case EXPRESSION_STATEMENT:
             strbuf_append(sb, expression_statement_to_string(
@@ -128,6 +166,10 @@ char *ast_to_string(AST *ast) {
         case RETURN_STATEMENT:
             strbuf_append(
                 sb, return_statement_to_string(statement->return_statement));
+            break;
+        case LET_STATEMENT:
+            strbuf_append(sb,
+                          let_statement_to_string(statement->let_statement));
             break;
         }
     }

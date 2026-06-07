@@ -80,12 +80,31 @@ void parse_return_statement(Parser *p) {
     add_statement(p->ast, s);
 }
 
-void parser_expect(Parser *p, enum TokenType token_type) {
+void parse_let_statement(Parser *p) {
+    Statement *s = malloc(sizeof(Statement));
+    s->type = LET_STATEMENT;
+    s->let_statement = malloc(sizeof(LetStatement));
+
+    // Move over the 'let' token.
+    parser_advance(p);
+
+    Token *name = parser_expect(p, IDENTIFIER);
+    s->let_statement->name = name;
+    s->let_statement->Value = parse_expression(p);
+
+    parser_expect(p, RPAREN);
+
+    add_statement(p->ast, s);
+}
+
+Token *parser_expect(Parser *p, enum TokenType token_type) {
     if (p->cur_token->Type != token_type) {
         parser_error(p, "Expected %s, got %s", token_type_name(token_type),
                      token_type_name(p->cur_token->Type));
     }
+    Token *curtoken = p->cur_token;
     parser_advance(p);
+    return curtoken;
 }
 
 Expression *parse_integer(Parser *p) {
@@ -181,9 +200,42 @@ Expression *parse_string(Parser *p) {
     return e;
 }
 
-Expression *parse_call(Parser *p) {
-    // Move over (
+Expression *parse_if_expression(Parser *p) {
+    // Move over the 'if'
     parser_advance(p);
+
+    IfExpression *i = malloc(sizeof(IfExpression));
+    i->cond = parse_expression(p);
+    i->consequence = parse_expression(p);
+    i->alternative = NULL;
+
+    if (p->cur_token->Type != RPAREN) {
+        i->alternative = parse_expression(p);
+    }
+
+    parser_expect(p, RPAREN);
+
+    Expression *e = malloc(sizeof(Expression));
+    e->type = EXPR_IF;
+
+    e->if_expression = i;
+
+    return e;
+}
+
+Expression *parse_lparen_expression(Parser *p) {
+    // Move over the '('
+    parser_advance(p);
+
+    switch (p->cur_token->Type) {
+    case IF:
+        return parse_if_expression(p);
+        break;
+    default:
+        return parse_call(p);
+    }
+}
+Expression *parse_call(Parser *p) {
 
     CallExpression *c = malloc(sizeof(CallExpression));
     c->caller = p->cur_token;
@@ -216,6 +268,9 @@ void parse_statement(Parser *p) {
     case RETURN:
         parse_return_statement(p);
         break;
+    case LET:
+        parse_let_statement(p);
+        break;
     case IDENTIFIER:
     case MINUS:
     case MULTIPLY:
@@ -232,6 +287,7 @@ void parse_statement(Parser *p) {
     case NOT:
     case PLUS:
     case CONCAT:
+    case IF:
         // It's a call expression statement now!
         parser_retreat(p);
         // Now expression statement will take (..) as expression.
@@ -260,7 +316,7 @@ Expression *parse_expression(Parser *p) {
     case IDENTIFIER:
         return parse_identifier(p);
     case LPAREN:
-        return parse_call(p);
+        return parse_lparen_expression(p);
     default:
         parser_error(p, "No expression can be parsed with %s",
                      p->cur_token->Value);
