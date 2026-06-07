@@ -71,6 +71,7 @@ set(LEXER_TESTS
     test_quote_shorthand
     test_consecutive_expressions
     test_empty_string
+    test_dots
 )
 
 foreach(test_name ${LEXER_TESTS})

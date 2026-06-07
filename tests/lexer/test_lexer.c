@@ -78,17 +78,16 @@ void test_delimiters() {
 
     testTokens(input, expectedTokens);
 }
-// void test_dots() {
-//     char *input = ".. ...";
-//
-//     Token expectedTokens[] = {
-//         {CONCAT, ".."},
-//         {ELLIPSIS, "..."},
-//         {TOKEN_EOF, ""},
-//     };
-//
-//     testTokens(input, expectedTokens);
-// }
+void test_dots() {
+    char *input = "..";
+
+    Token expectedTokens[] = {
+        {CONCAT, ".."},
+        {TOKEN_EOF, ""},
+    };
+
+    testTokens(input, expectedTokens);
+}
 void test_identifiers() {
     char *input = "foo bar _baz";
 
@@ -334,6 +333,7 @@ static const TestEntry LEXER_TESTS[] = {
     {"test_quote_shorthand",                 test_quote_shorthand},
     {"test_consecutive_expressions",         test_consecutive_expressions},
     {"test_empty_string",                    test_empty_string},
+    {"test_dots",                            test_dots},
 };
 
 #define NUM_LEXER_TESTS (sizeof(LEXER_TESTS) / sizeof(LEXER_TESTS[0]))

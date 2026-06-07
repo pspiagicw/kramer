@@ -231,6 +231,7 @@ void parse_statement(Parser *p) {
     case OR:
     case NOT:
     case PLUS:
+    case CONCAT:
         // It's a call expression statement now!
         parser_retreat(p);
         // Now expression statement will take (..) as expression.

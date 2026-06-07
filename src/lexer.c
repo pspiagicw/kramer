@@ -146,7 +146,12 @@ Token *lexer_next(Lexer *l) {
         tok = newToken(COMMA, l->input, l->curPos, 1);
         break;
     case '.':
-        tok = newToken(DOT, l->input, l->curPos, 1);
+        if (lexer_peek(l) == '.') {
+            tok = newToken(CONCAT, l->input, l->curPos, 2);
+            lexer_advance(l);
+        } else {
+            tok = newToken(DOT, l->input, l->curPos, 1);
+        }
         break;
     default:
         if (is_letter(curChar)) {
