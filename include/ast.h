@@ -17,6 +17,7 @@ enum ExpressionType {
     EXPR_IDENT,
     EXPR_CALL,
     EXPR_IF,
+    EXPR_LAMBDA,
 };
 
 enum StringType { SINGLE, DOUBLE, MULTILINE };
@@ -57,6 +58,13 @@ typedef struct {
     struct Expression *alternative;
 } IfExpression;
 
+typedef struct {
+    Token **args;
+    int numArgs;
+
+    struct Statement *statement;
+} LambdaExpression;
+
 struct Expression {
     enum ExpressionType type;
     union {
@@ -67,6 +75,7 @@ struct Expression {
         IdentifierExpression *identifier_expression;
         CallExpression *call_expression;
         IfExpression *if_expression;
+        LambdaExpression *lambda_expression;
     };
 };
 
@@ -92,6 +101,7 @@ typedef struct {
 } FunctionStatement;
 
 void add_arg_to_fn(FunctionStatement *fn, Token *arg);
+void add_arg_to_lambda(LambdaExpression *l, Token *arg);
 
 struct Statement {
     enum StatementType type;
@@ -129,4 +139,5 @@ char *identifier_to_string(IdentifierExpression *expr);
 char *call_to_string(CallExpression *expr);
 char *if_to_string(IfExpression *expr);
 char *fn_to_string(FunctionStatement *fn);
+char *lambda_to_string(LambdaExpression *expr);
 char *statement_to_string(Statement *statement);

@@ -45,6 +45,8 @@ Expression *parse_if_expression(Parser *p);
 
 Expression *parse_lparen_expression(Parser *p);
 
+Expression *parse_lambda_expression(Parser *p);
+
 Statement *parse_expression_statement(Parser *P);
 Statement *parse_return_statement(Parser *p);
 Statement *parse_let_statement(Parser *p);

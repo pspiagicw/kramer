@@ -21,6 +21,11 @@ void add_arg_to_fn(FunctionStatement *f, Token *arg) {
     f->args[f->numArgs++] = arg;
 }
 
+void add_arg_to_lambda(LambdaExpression *l, Token *arg) {
+    l->args = realloc(l->args, (l->numArgs + 1) * sizeof(Token *));
+    l->args[l->numArgs++] = arg;
+}
+
 char *expression_to_string(Expression *expr) {
     switch (expr->type) {
     case EXPR_INTEGER:
@@ -37,6 +42,8 @@ char *expression_to_string(Expression *expr) {
         return call_to_string(expr->call_expression);
     case EXPR_IF:
         return if_to_string(expr->if_expression);
+    case EXPR_LAMBDA:
+        return lambda_to_string(expr->lambda_expression);
     default:
         return "";
     }
@@ -129,6 +136,26 @@ char *if_to_string(IfExpression *expr) {
 
 char *fn_to_string(FunctionStatement *fn);
 
+char *statement_to_string(Statement *s);
+
+char *lambda_to_string(LambdaExpression *expr) {
+    StrBuf *sb = strbuf_new();
+    strbuf_append(sb, "(lambda (");
+    for (int i = 0; i < expr->numArgs; i++) {
+        if (i != 0) strbuf_append(sb, " ");
+        strbuf_append(sb, expr->args[i]->Value);
+    }
+    strbuf_append(sb, ")");
+    if (expr->statement != NULL) {
+        strbuf_append(sb, " ");
+        char *body = statement_to_string(expr->statement);
+        strbuf_append(sb, body);
+        free(body);
+    }
+    strbuf_append(sb, ")");
+    return strbuf_done(sb);
+}
+
 char *statement_to_string(Statement *s) {
     switch (s->type) {
     case EXPRESSION_STATEMENT:
@@ -149,7 +176,8 @@ char *fn_to_string(FunctionStatement *fn) {
     strbuf_append(sb, fn->name->Value);
     strbuf_append(sb, " (");
     for (int i = 0; i < fn->numArgs; i++) {
-        if (i != 0) strbuf_append(sb, " ");
+        if (i != 0)
+            strbuf_append(sb, " ");
         strbuf_append(sb, fn->args[i]->Value);
     }
     strbuf_append(sb, ")");
@@ -213,8 +241,7 @@ char *ast_to_string(AST *ast) {
                           let_statement_to_string(statement->let_statement));
             break;
         case FUNCTION_STATEMENT:
-            strbuf_append(sb,
-                          fn_to_string(statement->function_statement));
+            strbuf_append(sb, fn_to_string(statement->function_statement));
             break;
         }
     }

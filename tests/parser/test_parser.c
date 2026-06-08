@@ -298,26 +298,26 @@ void test_do_three() {
 }
 
 void test_anonymous_fn_no_params() {
-    char *input = "(fn () 42)";
-    char *expected = "(fn () 42)";
+    char *input = "(lambda () 42)";
+    char *expected = "(lambda () 42)";
     testParser(input, expected);
 }
 
 void test_anonymous_fn_single_param() {
-    char *input = "(fn (x) (* x 2))";
-    char *expected = "(fn (x) (* x 2))";
+    char *input = "(lambda (x) (* x 2))";
+    char *expected = "(lambda (x) (* x 2))";
     testParser(input, expected);
 }
 
 void test_anonymous_fn_two_params() {
-    char *input = "(fn (x y) (+ x y))";
-    char *expected = "(fn (x y) (+ x y))";
+    char *input = "(lambda (x y) (+ x y))";
+    char *expected = "(lambda (x y) (+ x y))";
     testParser(input, expected);
 }
 
 void test_anonymous_fn_returning_fn() {
-    char *input = "(fn (x) (fn (y) (+ x y)))";
-    char *expected = "(fn (x) (fn (y) (+ x y)))";
+    char *input = "(lambda (x) (lambda (y) (+ x y)))";
+    char *expected = "(lambda (x) (lambda (y) (+ x y)))";
     testParser(input, expected);
 }
 
@@ -328,78 +328,81 @@ void test_do_in_if() {
 }
 
 void test_let_anonymous_fn() {
-    char *input = "(let double (fn (x) (* x 2)))";
-    char *expected = "(let double (fn (x) (* x 2)))";
+    char *input = "(let double (lambda (x) (* x 2)))";
+    char *expected = "(let double (lambda (x) (* x 2)))";
     testParser(input, expected);
 }
 
 typedef void (*TestFn)(void);
-typedef struct { const char *name; TestFn fn; } TestEntry;
+typedef struct {
+    const char *name;
+    TestFn fn;
+} TestEntry;
 
 static const TestEntry PARSER_TESTS[] = {
     // atoms
-    {"test_empty_input",                  test_empty_input},
-    {"test_int_expression",               test_int_expression},
-    {"test_float_expression",             test_float_expression},
-    {"test_string_expression",            test_string_expression},
-    {"test_bool_expression",              test_bool_expression},
-    {"test_bool_false_expression",        test_bool_false_expression},
-    {"test_nil_expression",               test_nil_expression},
-    {"test_identifier_expression",        test_identifier_expression},
+    {"test_empty_input", test_empty_input},
+    {"test_int_expression", test_int_expression},
+    {"test_float_expression", test_float_expression},
+    {"test_string_expression", test_string_expression},
+    {"test_bool_expression", test_bool_expression},
+    {"test_bool_false_expression", test_bool_false_expression},
+    {"test_nil_expression", test_nil_expression},
+    {"test_identifier_expression", test_identifier_expression},
     // arithmetic
-    {"test_add",                          test_add},
-    {"test_subtract",                     test_subtract},
-    {"test_multiply",                     test_multiply},
-    {"test_divide",                       test_divide},
-    {"test_modulo",                       test_modulo},
+    {"test_add", test_add},
+    {"test_subtract", test_subtract},
+    {"test_multiply", test_multiply},
+    {"test_divide", test_divide},
+    {"test_modulo", test_modulo},
     {"test_expression_statement_complex", test_expression_statement_complex},
     // comparison
-    {"test_eq",                           test_eq},
-    {"test_neq",                          test_neq},
-    {"test_lt",                           test_lt},
-    {"test_gt",                           test_gt},
-    {"test_lte",                          test_lte},
-    {"test_gte",                          test_gte},
+    {"test_eq", test_eq},
+    {"test_neq", test_neq},
+    {"test_lt", test_lt},
+    {"test_gt", test_gt},
+    {"test_lte", test_lte},
+    {"test_gte", test_gte},
     // boolean logic
-    {"test_and",                          test_and},
-    {"test_or",                           test_or},
-    {"test_not",                          test_not},
+    {"test_and", test_and},
+    {"test_or", test_or},
+    {"test_not", test_not},
     // string
-    {"test_string_concat",                test_string_concat},
+    {"test_string_concat", test_string_concat},
     // calls
-    {"test_function_call",                test_function_call},
-    {"test_nested_function_call",         test_nested_function_call},
-    {"test_nested_call",                  test_nested_call},
+    {"test_function_call", test_function_call},
+    {"test_nested_function_call", test_nested_function_call},
+    {"test_nested_call", test_nested_call},
     // return
-    {"test_return_statement",             test_return_statement},
-    {"test_return_with_call",             test_return_with_call},
+    {"test_return_statement", test_return_statement},
+    {"test_return_with_call", test_return_with_call},
     // let / set
-    {"test_let_statement",                test_let_statement},
-    {"test_let_statement_with_float",     test_let_statement_with_float},
-    {"test_let_with_call",                test_let_with_call},
-    {"test_let_anonymous_fn",             test_let_anonymous_fn},
-    {"test_assignment_statement",         test_assignment_statement},
+    {"test_let_statement", test_let_statement},
+    {"test_let_statement_with_float", test_let_statement_with_float},
+    {"test_let_with_call", test_let_with_call},
+    {"test_let_anonymous_fn", test_let_anonymous_fn},
+    {"test_assignment_statement", test_assignment_statement},
     // multiple statements
-    {"test_expression_statement",         test_expression_statement},
-    {"test_multiple_statements",          test_multiple_statements},
-    {"test_multiple_let_statements",      test_multiple_let_statements},
+    {"test_expression_statement", test_expression_statement},
+    {"test_multiple_statements", test_multiple_statements},
+    {"test_multiple_let_statements", test_multiple_let_statements},
     // if
-    {"test_if_statement",                 test_if_statement},
-    {"test_if_else_statement",            test_if_else_statement},
-    {"test_if_with_complex_condition",    test_if_with_complex_condition},
+    {"test_if_statement", test_if_statement},
+    {"test_if_else_statement", test_if_else_statement},
+    {"test_if_with_complex_condition", test_if_with_complex_condition},
     // do
-    {"test_do_single",                    test_do_single},
-    {"test_do_multiple",                  test_do_multiple},
-    {"test_do_three",                     test_do_three},
-    {"test_do_in_if",                     test_do_in_if},
+    {"test_do_single", test_do_single},
+    {"test_do_multiple", test_do_multiple},
+    {"test_do_three", test_do_three},
+    {"test_do_in_if", test_do_in_if},
     // fn
-    {"test_function_statement",           test_function_statement},
+    {"test_function_statement", test_function_statement},
     {"test_function_statement_with_args", test_function_statement_with_args},
-    {"test_fn_with_single_param",         test_fn_with_single_param},
-    {"test_anonymous_fn_no_params",       test_anonymous_fn_no_params},
-    {"test_anonymous_fn_single_param",    test_anonymous_fn_single_param},
-    {"test_anonymous_fn_two_params",      test_anonymous_fn_two_params},
-    {"test_anonymous_fn_returning_fn",    test_anonymous_fn_returning_fn},
+    {"test_fn_with_single_param", test_fn_with_single_param},
+    {"test_anonymous_fn_no_params", test_anonymous_fn_no_params},
+    {"test_anonymous_fn_single_param", test_anonymous_fn_single_param},
+    {"test_anonymous_fn_two_params", test_anonymous_fn_two_params},
+    {"test_anonymous_fn_returning_fn", test_anonymous_fn_returning_fn},
 };
 
 #define NUM_PARSER_TESTS (sizeof(PARSER_TESTS) / sizeof(PARSER_TESTS[0]))
@@ -409,7 +412,8 @@ int main(int argc, char *argv[]) {
     if (argc >= 2) {
         for (size_t i = 0; i < NUM_PARSER_TESTS; i++) {
             if (strcmp(argv[1], PARSER_TESTS[i].name) == 0) {
-                UnityDefaultTestRun(PARSER_TESTS[i].fn, PARSER_TESTS[i].name, 0);
+                UnityDefaultTestRun(PARSER_TESTS[i].fn, PARSER_TESTS[i].name,
+                                    0);
                 return UNITY_END();
             }
         }

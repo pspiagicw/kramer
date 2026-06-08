@@ -238,6 +238,8 @@ Expression *parse_lparen_expression(Parser *p) {
     case IF:
         return parse_if_expression(p);
         break;
+    case LAMBDA:
+        return parse_lambda_expression(p);
     default:
         return parse_call(p);
     }
@@ -280,6 +282,7 @@ Statement *parse_fn_statement(Parser *p) {
     while (p->cur_token->Type != RPAREN) {
         add_arg_to_fn(f, parser_expect(p, IDENTIFIER));
     }
+
     parser_expect(p, RPAREN);
 
     if (p->cur_token->Type != RPAREN) {
@@ -293,6 +296,33 @@ Statement *parse_fn_statement(Parser *p) {
     parser_expect(p, RPAREN);
 
     return s;
+}
+
+Expression *parse_lambda_expression(Parser *p) {
+    // Move over the 'lambda'
+    parser_advance(p);
+
+    LambdaExpression *l = malloc(sizeof(LambdaExpression));
+
+    parser_expect(p, LPAREN);
+
+    while (p->cur_token->Type != RPAREN) {
+        add_arg_to_lambda(l, parser_expect(p, IDENTIFIER));
+    }
+
+    parser_expect(p, RPAREN);
+
+    if (p->cur_token->Type != RPAREN) {
+        l->statement = parse_statement(p);
+    }
+
+    Expression *e = malloc(sizeof(Expression));
+    e->type = EXPR_LAMBDA;
+    e->lambda_expression = l;
+
+    parser_expect(p, RPAREN);
+
+    return e;
 }
 
 Statement *parse_compound_statements(Parser *p) {
@@ -322,6 +352,7 @@ Statement *parse_compound_statements(Parser *p) {
     case PLUS:
     case CONCAT:
     case IF:
+    case LAMBDA:
         // It's a call expression statement now!
         parser_retreat(p);
         // Now expression statement will take (..) as expression.
@@ -352,6 +383,8 @@ Expression *parse_expression(Parser *p) {
         return parse_identifier(p);
     case LPAREN:
         return parse_lparen_expression(p);
+    case LAMBDA:
+        return parse_lambda_expression(p);
     default:
         parser_error(p, "No expression can be parsed with %s",
                      p->cur_token->Value);
