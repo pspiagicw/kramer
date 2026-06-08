@@ -16,6 +16,11 @@ void add_argument_to_call(CallExpression *c, Expression *argument) {
     c->argumentList[c->argumentNum++] = argument;
 }
 
+void add_arg_to_fn(FunctionStatement *f, Token *arg) {
+    f->args = realloc(f->args, (f->numArgs + 1) * sizeof(Token *));
+    f->args[f->numArgs++] = arg;
+}
+
 char *expression_to_string(Expression *expr) {
     switch (expr->type) {
     case EXPR_INTEGER:
@@ -122,6 +127,42 @@ char *if_to_string(IfExpression *expr) {
     return strbuf_done(sb);
 }
 
+char *fn_to_string(FunctionStatement *fn);
+
+char *statement_to_string(Statement *s) {
+    switch (s->type) {
+    case EXPRESSION_STATEMENT:
+        return expression_statement_to_string(s->expression_statement);
+    case RETURN_STATEMENT:
+        return return_statement_to_string(s->return_statement);
+    case LET_STATEMENT:
+        return let_statement_to_string(s->let_statement);
+    case FUNCTION_STATEMENT:
+        return fn_to_string(s->function_statement);
+    }
+    return "";
+}
+
+char *fn_to_string(FunctionStatement *fn) {
+    StrBuf *sb = strbuf_new();
+    strbuf_append(sb, "(fn ");
+    strbuf_append(sb, fn->name->Value);
+    strbuf_append(sb, " (");
+    for (int i = 0; i < fn->numArgs; i++) {
+        if (i != 0) strbuf_append(sb, " ");
+        strbuf_append(sb, fn->args[i]->Value);
+    }
+    strbuf_append(sb, ")");
+    if (fn->statement != NULL) {
+        strbuf_append(sb, " ");
+        char *body = statement_to_string(fn->statement);
+        strbuf_append(sb, body);
+        free(body);
+    }
+    strbuf_append(sb, ")");
+    return strbuf_done(sb);
+}
+
 char *return_statement_to_string(ReturnStatement *rs) {
     StrBuf *sb = strbuf_new();
     strbuf_append(sb, "(return ");
@@ -170,6 +211,10 @@ char *ast_to_string(AST *ast) {
         case LET_STATEMENT:
             strbuf_append(sb,
                           let_statement_to_string(statement->let_statement));
+            break;
+        case FUNCTION_STATEMENT:
+            strbuf_append(sb,
+                          fn_to_string(statement->function_statement));
             break;
         }
     }

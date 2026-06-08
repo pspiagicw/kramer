@@ -3,7 +3,12 @@
 #include "token.h"
 #include <stdbool.h>
 
-enum StatementType { RETURN_STATEMENT, EXPRESSION_STATEMENT, LET_STATEMENT };
+enum StatementType {
+    RETURN_STATEMENT,
+    EXPRESSION_STATEMENT,
+    LET_STATEMENT,
+    FUNCTION_STATEMENT
+};
 enum ExpressionType {
     EXPR_INTEGER,
     EXPR_FLOAT,
@@ -16,7 +21,8 @@ enum ExpressionType {
 
 enum StringType { SINGLE, DOUBLE, MULTILINE };
 
-struct Expression;
+typedef struct Expression Expression;
+typedef struct Statement Statement;
 
 typedef struct {
     Token *caller;
@@ -51,7 +57,7 @@ typedef struct {
     struct Expression *alternative;
 } IfExpression;
 
-typedef struct Expression {
+struct Expression {
     enum ExpressionType type;
     union {
         IntegerExpression *integer_expression;
@@ -62,7 +68,7 @@ typedef struct Expression {
         CallExpression *call_expression;
         IfExpression *if_expression;
     };
-} Expression;
+};
 
 typedef struct {
     Expression *value;
@@ -78,13 +84,24 @@ typedef struct {
 } LetStatement;
 
 typedef struct {
+    Token *name;
+    Token **args;
+    int numArgs;
+
+    struct Statement *statement;
+} FunctionStatement;
+
+void add_arg_to_fn(FunctionStatement *fn, Token *arg);
+
+struct Statement {
     enum StatementType type;
     union {
         ReturnStatement *return_statement;
         ExpressionStatement *expression_statement;
         LetStatement *let_statement;
+        FunctionStatement *function_statement;
     };
-} Statement;
+};
 
 typedef struct {
     Statement *statements;
@@ -111,3 +128,5 @@ char *identifier_to_string(IdentifierExpression *expr);
 
 char *call_to_string(CallExpression *expr);
 char *if_to_string(IfExpression *expr);
+char *fn_to_string(FunctionStatement *fn);
+char *statement_to_string(Statement *statement);

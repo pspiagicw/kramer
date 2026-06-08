@@ -28,7 +28,8 @@ void parser_peek(Parser *p);
 void parser_error(Parser *p, const char *fmt, ...);
 Error *parser_errors(Parser *p);
 
-void parse_statement(Parser *p);
+Statement *parse_statement(Parser *p);
+Statement *parse_compound_statements(Parser *p);
 
 Expression *parse_integer(Parser *p);
 Expression *parse_float(Parser *p);
@@ -44,9 +45,11 @@ Expression *parse_if_expression(Parser *p);
 
 Expression *parse_lparen_expression(Parser *p);
 
-void parse_expression_statement(Parser *P);
-void parse_return_statement(Parser *p);
-void parse_let_statement(Parser *p);
+Statement *parse_expression_statement(Parser *P);
+Statement *parse_return_statement(Parser *p);
+Statement *parse_let_statement(Parser *p);
+
+Statement *parse_fn_statement(Parser *p);
 
 AST *parser_ast(Parser *p);
 Token *parser_expect(Parser *p, enum TokenType token_type);

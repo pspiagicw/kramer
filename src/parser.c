@@ -46,26 +46,33 @@ void parser_retreat(Parser *p) {
 
 void parser_parse(Parser *p) {
     while (p->cur_token->Type != TOKEN_EOF) {
-        switch (p->cur_token->Type) {
-        case LPAREN:
-            parse_statement(p);
-            break;
-        default:
-            parse_expression_statement(p);
+        Statement *s = parse_statement(p);
+        if (s != NULL) {
+            add_statement(p->ast, s);
         }
     }
 }
 
-void parse_expression_statement(Parser *p) {
+Statement *parse_statement(Parser *p) {
+    switch (p->cur_token->Type) {
+    case LPAREN:
+        return parse_compound_statements(p);
+        break;
+    default:
+        return parse_expression_statement(p);
+    }
+}
+
+Statement *parse_expression_statement(Parser *p) {
     Statement *s = malloc(sizeof(Statement));
     s->type = EXPRESSION_STATEMENT;
     s->expression_statement = malloc(sizeof(ExpressionStatement));
     s->expression_statement->expression = parse_expression(p);
 
-    add_statement(p->ast, s);
+    return s;
 }
 
-void parse_return_statement(Parser *p) {
+Statement *parse_return_statement(Parser *p) {
     Statement *s = malloc(sizeof(Statement));
     s->type = RETURN_STATEMENT;
     s->return_statement = malloc(sizeof(ReturnStatement));
@@ -77,10 +84,10 @@ void parse_return_statement(Parser *p) {
 
     parser_expect(p, RPAREN);
 
-    add_statement(p->ast, s);
+    return s;
 }
 
-void parse_let_statement(Parser *p) {
+Statement *parse_let_statement(Parser *p) {
     Statement *s = malloc(sizeof(Statement));
     s->type = LET_STATEMENT;
     s->let_statement = malloc(sizeof(LetStatement));
@@ -94,7 +101,7 @@ void parse_let_statement(Parser *p) {
 
     parser_expect(p, RPAREN);
 
-    add_statement(p->ast, s);
+    return s;
 }
 
 Token *parser_expect(Parser *p, enum TokenType token_type) {
@@ -261,16 +268,43 @@ Expression *parse_call(Parser *p) {
     return e;
 }
 
-void parse_statement(Parser *p) {
+Statement *parse_fn_statement(Parser *p) {
+    // Move over the 'fn'
+    parser_advance(p);
+
+    FunctionStatement *f = malloc(sizeof(FunctionStatement));
+    f->name = parser_expect(p, IDENTIFIER);
+
+    parser_expect(p, LPAREN);
+
+    while (p->cur_token->Type != RPAREN) {
+        add_arg_to_fn(f, parser_expect(p, IDENTIFIER));
+    }
+    parser_expect(p, RPAREN);
+
+    if (p->cur_token->Type != RPAREN) {
+        f->statement = parse_statement(p);
+    }
+
+    Statement *s = malloc(sizeof(Statement));
+    s->type = FUNCTION_STATEMENT;
+    s->function_statement = f;
+
+    parser_expect(p, RPAREN);
+
+    return s;
+}
+
+Statement *parse_compound_statements(Parser *p) {
     parser_advance(p);
 
     switch (p->cur_token->Type) {
     case RETURN:
-        parse_return_statement(p);
-        break;
+        return parse_return_statement(p);
     case LET:
-        parse_let_statement(p);
-        break;
+        return parse_let_statement(p);
+    case FN:
+        return parse_fn_statement(p);
     case IDENTIFIER:
     case MINUS:
     case MULTIPLY:
@@ -291,12 +325,13 @@ void parse_statement(Parser *p) {
         // It's a call expression statement now!
         parser_retreat(p);
         // Now expression statement will take (..) as expression.
-        parse_expression_statement(p);
+        return parse_expression_statement(p);
         break;
     default:
         parser_error(p, "No statement can be parsed with %s",
                      p->cur_token->Value);
         parser_advance(p);
+        return NULL;
     }
 }
 
