@@ -51,6 +51,10 @@ Token *lexer_next(Lexer *l) {
 
     lexer_whitespace(l);
 
+    if (l->isEOF) {
+        return newToken(TOKEN_EOF, "", 0, 0);
+    }
+
     char curChar = l->input[l->curPos];
 
     switch (curChar) {
