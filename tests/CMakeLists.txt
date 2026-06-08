@@ -72,6 +72,7 @@ set(LEXER_TESTS
     test_consecutive_expressions
     test_empty_string
     test_dots
+    test_lambda_keyword
 )
 
 foreach(test_name ${LEXER_TESTS})

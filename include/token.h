@@ -29,6 +29,7 @@
     X(ELSE)                                                                    \
     X(RETURN)                                                                  \
     X(FN)                                                                      \
+    X(LAMBDA)                                                                  \
     X(END)                                                                     \
     X(LET)                                                                     \
     X(NOT)                                                                     \

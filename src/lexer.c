@@ -346,6 +346,7 @@ enum TokenType predict_type(char *value) {
     STRCASE(value, "else", ELSE) ?:
     STRCASE(value, "return", RETURN) ?:
     STRCASE(value, "fn", FN) ?:
+    STRCASE(value, "lambda", LAMBDA) ?:
     STRCASE(value, "end", END) ?:
     STRCASE(value, "let", LET) ?:
     STRCASE(value, "not", NOT) ?:

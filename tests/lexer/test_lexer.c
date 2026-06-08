@@ -144,6 +144,16 @@ void test_keywords() {
 
     testTokens(input, expectedTokens);
 }
+void test_lambda_keyword() {
+    char *input = "lambda";
+
+    Token expectedTokens[] = {
+        {LAMBDA, "lambda"},
+        {TOKEN_EOF, ""},
+    };
+
+    testTokens(input, expectedTokens);
+}
 void test_literals() {
     char *input = "nil true false";
 
@@ -308,32 +318,39 @@ void test_empty_string() {
 }
 
 typedef void (*TestFn)(void);
-typedef struct { const char *name; TestFn fn; } TestEntry;
+typedef struct {
+    const char *name;
+    TestFn fn;
+} TestEntry;
 
 static const TestEntry LEXER_TESTS[] = {
-    {"test_single_symbol",                   test_single_symbol},
-    {"test_symbols",                         test_symbols},
-    {"test_single_char_comparison_assignment", test_single_char_comparison_assignment},
-    {"test_double_char_comparison_operators", test_double_char_comparison_operators},
-    {"test_delimiters",                      test_delimiters},
-    {"test_identifiers",                     test_identifiers},
-    {"test_numbers",                         test_numbers},
-    {"test_float_edge_cases",                test_float_edge_cases},
-    {"test_keywords",                        test_keywords},
-    {"test_literals",                        test_literals},
-    {"test_strings",                         test_strings},
-    {"test_single_line_comment_only",        test_single_line_comment_only},
-    {"test_multiline_comment_only",          test_multiline_comment_only},
-    {"test_multiline_comment_between_code",  test_multiline_comment_between_code},
-    {"test_array",                           test_array},
-    {"test_negative_numbers",                test_negative_numbers},
-    {"test_nested_sexpr",                    test_nested_sexpr},
-    {"test_empty_list",                      test_empty_list},
-    {"test_hyphenated_identifier",           test_hyphenated_identifier},
-    {"test_quote_shorthand",                 test_quote_shorthand},
-    {"test_consecutive_expressions",         test_consecutive_expressions},
-    {"test_empty_string",                    test_empty_string},
-    {"test_dots",                            test_dots},
+    {"test_single_symbol", test_single_symbol},
+    {"test_symbols", test_symbols},
+    {"test_single_char_comparison_assignment",
+     test_single_char_comparison_assignment},
+    {"test_double_char_comparison_operators",
+     test_double_char_comparison_operators},
+    {"test_delimiters", test_delimiters},
+    {"test_identifiers", test_identifiers},
+    {"test_numbers", test_numbers},
+    {"test_float_edge_cases", test_float_edge_cases},
+    {"test_keywords", test_keywords},
+    {"test_literals", test_literals},
+    {"test_strings", test_strings},
+    {"test_single_line_comment_only", test_single_line_comment_only},
+    {"test_multiline_comment_only", test_multiline_comment_only},
+    {"test_multiline_comment_between_code",
+     test_multiline_comment_between_code},
+    {"test_array", test_array},
+    {"test_negative_numbers", test_negative_numbers},
+    {"test_nested_sexpr", test_nested_sexpr},
+    {"test_empty_list", test_empty_list},
+    {"test_hyphenated_identifier", test_hyphenated_identifier},
+    {"test_quote_shorthand", test_quote_shorthand},
+    {"test_consecutive_expressions", test_consecutive_expressions},
+    {"test_empty_string", test_empty_string},
+    {"test_dots", test_dots},
+    {"test_lambda_keyword", test_lambda_keyword},
 };
 
 #define NUM_LEXER_TESTS (sizeof(LEXER_TESTS) / sizeof(LEXER_TESTS[0]))
