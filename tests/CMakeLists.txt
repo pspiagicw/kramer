@@ -73,6 +73,7 @@ set(LEXER_TESTS
     test_empty_string
     test_dots
     test_lambda_keyword
+    test_nil_keyword
 )
 
 foreach(test_name ${LEXER_TESTS})

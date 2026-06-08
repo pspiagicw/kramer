@@ -385,6 +385,12 @@ Expression *parse_expression(Parser *p) {
         return parse_lparen_expression(p);
     case LAMBDA:
         return parse_lambda_expression(p);
+    case NIL: {
+        Expression *e = malloc(sizeof(Expression));
+        e->type = EXPR_NIL;
+        parser_advance(p);
+        return e;
+    }
     default:
         parser_error(p, "No expression can be parsed with %s",
                      p->cur_token->Value);

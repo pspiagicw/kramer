@@ -44,6 +44,8 @@ char *expression_to_string(Expression *expr) {
         return if_to_string(expr->if_expression);
     case EXPR_LAMBDA:
         return lambda_to_string(expr->lambda_expression);
+    case EXPR_NIL:
+        return strdup("nil");
     default:
         return "";
     }

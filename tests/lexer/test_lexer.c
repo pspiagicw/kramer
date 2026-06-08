@@ -144,6 +144,16 @@ void test_keywords() {
 
     testTokens(input, expectedTokens);
 }
+void test_nil_keyword() {
+    char *input = "nil";
+
+    Token expectedTokens[] = {
+        {NIL, "nil"},
+        {TOKEN_EOF, ""},
+    };
+
+    testTokens(input, expectedTokens);
+}
 void test_lambda_keyword() {
     char *input = "lambda";
 
@@ -351,6 +361,7 @@ static const TestEntry LEXER_TESTS[] = {
     {"test_empty_string", test_empty_string},
     {"test_dots", test_dots},
     {"test_lambda_keyword", test_lambda_keyword},
+    {"test_nil_keyword", test_nil_keyword},
 };
 
 #define NUM_LEXER_TESTS (sizeof(LEXER_TESTS) / sizeof(LEXER_TESTS[0]))

@@ -18,6 +18,7 @@ enum ExpressionType {
     EXPR_CALL,
     EXPR_IF,
     EXPR_LAMBDA,
+    EXPR_NIL,
 };
 
 enum StringType { SINGLE, DOUBLE, MULTILINE };
