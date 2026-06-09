@@ -1,11 +1,11 @@
 (fn add (x)
-  (fn (y) (+ x y)))
+  (lambda (y) (+ x y)))
 
 (fn multiply (x)
-  (fn (y) (* x y)))
+  (lambda (y) (* x y)))
 
 (fn flip (f)
-  (fn (x) (fn (y) (f y x))))
+  (lambda (x) (lambda (y) (f y x))))
 
 (let add5 (add 5))
 (let add10 (add 10))

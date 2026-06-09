@@ -303,6 +303,9 @@ Expression *parse_lambda_expression(Parser *p) {
     parser_advance(p);
 
     LambdaExpression *l = malloc(sizeof(LambdaExpression));
+    l->args = NULL;
+    l->numArgs = 0;
+    l->statement = NULL;
 
     parser_expect(p, LPAREN);
 

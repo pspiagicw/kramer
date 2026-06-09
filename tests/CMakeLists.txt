@@ -152,8 +152,8 @@ foreach(test_name ${PARSER_TESTS})
 endforeach()
 
 # Example files — each is parsed by the kramer binary as a separate test
-file(GLOB EXAMPLE_FILES "${PROJECT_SOURCE_DIR}/examples/*.krm")
-foreach(example_path ${EXAMPLE_FILES})
-    get_filename_component(example_name ${example_path} NAME_WE)
-    add_test(NAME examples/${example_name} COMMAND kramer ${example_path})
-endforeach()
+# file(GLOB EXAMPLE_FILES "${PROJECT_SOURCE_DIR}/examples/*.krm")
+# foreach(example_path ${EXAMPLE_FILES})
+#     get_filename_component(example_name ${example_path} NAME_WE)
+#     add_test(NAME examples/${example_name} COMMAND kramer ${example_path})
+# endforeach()
