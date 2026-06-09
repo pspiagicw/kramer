@@ -38,9 +38,10 @@ foreach(testdir ${TEST_DIRS})
 
             target_link_libraries(${EXEC_NAME} PRIVATE core)
 
-            # Lexer and parser tests are registered individually below
+            # Lexer, parser, and evaluator tests are registered individually below
             if(NOT ${EXEC_NAME} STREQUAL "test_parser" AND
-               NOT ${EXEC_NAME} STREQUAL "test_lexer")
+               NOT ${EXEC_NAME} STREQUAL "test_lexer" AND
+               NOT ${EXEC_NAME} STREQUAL "test_evaluator")
                 add_test(NAME ${EXEC_NAME} COMMAND ${EXEC_NAME})
             endif()
         endif()
@@ -149,6 +150,49 @@ set(PARSER_TESTS
 
 foreach(test_name ${PARSER_TESTS})
     add_test(NAME parser/${test_name} COMMAND test_parser ${test_name})
+endforeach()
+
+# Individual evaluator tests — each runs as a separate CTest entry
+set(EVALUATOR_TESTS
+    # atoms
+    test_eval_integer
+    test_eval_float
+    test_eval_bool_true
+    test_eval_bool_false
+    test_eval_nil
+    test_eval_string
+    # arithmetic
+    test_eval_add
+    test_eval_subtract
+    test_eval_multiply
+    test_eval_divide
+    test_eval_modulo
+    test_eval_nested
+    # comparison
+    test_eval_eq_true
+    test_eval_eq_false
+    test_eval_lt
+    test_eval_gt
+    # boolean logic
+    test_eval_and
+    test_eval_or
+    test_eval_not
+    # string
+    test_eval_concat
+    # let
+    test_eval_let
+    test_eval_let_expr
+    # if
+    test_eval_if_true
+    test_eval_if_false
+    test_eval_if_no_else
+    # fn
+    test_eval_fn_call
+    test_eval_return
+)
+
+foreach(test_name ${EVALUATOR_TESTS})
+    add_test(NAME evaluator/${test_name} COMMAND test_evaluator ${test_name})
 endforeach()
 
 # Example files — each is parsed by the kramer binary as a separate test

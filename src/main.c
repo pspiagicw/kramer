@@ -24,6 +24,9 @@ int main(int argc, char *argv[]) {
     src[len] = '\0';
     fclose(f);
 
+    printf("LEN = %ld\n", len);
+    printf("SRC = [%s]\n", src);
+
     Lexer *l = newLexer(src);
     Parser *p = newParser(l);
     parser_parse(p);

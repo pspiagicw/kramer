@@ -1,4 +1,5 @@
 #include "lexer.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -184,7 +185,7 @@ Token *newToken(enum TokenType type, char *value, int start, int length) {
 
     char *dest = malloc(sizeof(char) * (length + 1));
 
-    strncpy(dest, value + start, length);
+    memcpy(dest, value + start, length);
     dest[length] = '\0';
     t->Type = type;
     t->Value = dest;
