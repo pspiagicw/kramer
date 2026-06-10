@@ -11,3 +11,6 @@ void env_set(Environment *env, const char *name, Value *value);
 Value *eval_ast(AST *ast, Environment *env);
 Value *eval_statement(Statement *s, Environment *env);
 Value *eval_expression(Expression *e, Environment *env);
+
+Value *eval_expression_statement(ExpressionStatement *es, Environment *env);
+Value *eval_expression(Expression *e, Environment *env);

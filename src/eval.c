@@ -1,32 +1,38 @@
 #include "eval.h"
-#include <stdlib.h>
 #include <string.h>
 
-Environment *env_new(Environment *outer) {
-    Environment *e = malloc(sizeof(Environment));
-    e->outer = outer;
-    e->keys = malloc(sizeof(char *) * 10);
-    e->values = malloc(sizeof(Value *) * 10);
-    e->count = 0;
-    e->capacity = 10;
+Value *eval_ast(AST *ast, Environment *env) {
+    Value *val = NULL;
 
-    return e;
-}
-
-Value *env_get(Environment *env, const char *name) {
-    int index = -1;
-    for (int i = 0; i < env->count; i++) {
-        if (strcmp(env->keys[i], name) == 0) {
-            index = i;
-            break;
-        }
+    for (int i = 0; i < ast->numStatements; i++) {
+        val = eval_statement(ast->statements[i], env);
     }
 
-    if (index < 0) {
+    return val;
+}
+
+Value *eval_statement(Statement *s, Environment *env) {
+    switch (s->type) {
+    case EXPRESSION_STATEMENT:
+        eval_expression_statement(s->expression_statement, env);
+        break;
+    default:
+        eval_error("Can't evaluate statement of type: %s",
+                   statement_type_to_string(s->type));
         return NULL;
     }
-
-    return env->values[index];
+    return NULL;
 }
 
-Value *eval_ast(AST *ast, Environment *env) { return NULL; }
+Value *eval_expression_statement(ExpressionStatement *es, Environment *env) {
+    return eval_expression(es->expression, env);
+}
+
+Value *eval_expression(Expression *e, Environment *env) {
+    switch (e->type) {
+    default:
+        eval_error("Can't evaluate expression of type: %s",
+                   expression_type_to_string(e->type));
+    }
+    return NULL;
+}

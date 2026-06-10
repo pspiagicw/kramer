@@ -41,7 +41,8 @@ foreach(testdir ${TEST_DIRS})
             # Lexer, parser, and evaluator tests are registered individually below
             if(NOT ${EXEC_NAME} STREQUAL "test_parser" AND
                NOT ${EXEC_NAME} STREQUAL "test_lexer" AND
-               NOT ${EXEC_NAME} STREQUAL "test_evaluator")
+               NOT ${EXEC_NAME} STREQUAL "test_evaluator" AND
+               NOT ${EXEC_NAME} STREQUAL "test_environment")
                 add_test(NAME ${EXEC_NAME} COMMAND ${EXEC_NAME})
             endif()
         endif()
@@ -193,6 +194,21 @@ set(EVALUATOR_TESTS
 
 foreach(test_name ${EVALUATOR_TESTS})
     add_test(NAME evaluator/${test_name} COMMAND test_evaluator ${test_name})
+endforeach()
+
+# Individual environment tests — each runs as a separate CTest entry
+set(ENVIRONMENT_TESTS
+    test_env_new_is_empty
+    test_env_get_missing
+    test_env_set_and_get
+    test_env_get_returns_same_pointer
+    test_env_multiple_bindings
+    test_env_overwrite_existing
+    test_env_grows_past_initial_capacity
+)
+
+foreach(test_name ${ENVIRONMENT_TESTS})
+    add_test(NAME environment/${test_name} COMMAND test_environment ${test_name})
 endforeach()
 
 # Example files — each is parsed by the kramer binary as a separate test

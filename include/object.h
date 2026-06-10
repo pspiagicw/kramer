@@ -43,3 +43,4 @@ struct Environment {
 };
 
 char *value_to_string(Value *v);
+Value *eval_error(const char *fmt, ...);

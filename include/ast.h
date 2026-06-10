@@ -115,7 +115,7 @@ struct Statement {
 };
 
 typedef struct {
-    Statement *statements;
+    Statement **statements;
     int numStatements;
 } AST;
 
@@ -142,3 +142,6 @@ char *if_to_string(IfExpression *expr);
 char *fn_to_string(FunctionStatement *fn);
 char *lambda_to_string(LambdaExpression *expr);
 char *statement_to_string(Statement *statement);
+
+const char *statement_type_to_string(enum StatementType type);
+const char *expression_type_to_string(enum ExpressionType type);

@@ -7,7 +7,7 @@
 void add_statement(AST *ast, Statement *statement) {
     ast->statements =
         realloc(ast->statements, (ast->numStatements + 1) * sizeof(Statement));
-    ast->statements[ast->numStatements++] = *statement;
+    ast->statements[ast->numStatements++] = statement;
 }
 
 void add_argument_to_call(CallExpression *c, Expression *argument) {
@@ -144,7 +144,8 @@ char *lambda_to_string(LambdaExpression *expr) {
     StrBuf *sb = strbuf_new();
     strbuf_append(sb, "(lambda (");
     for (int i = 0; i < expr->numArgs; i++) {
-        if (i != 0) strbuf_append(sb, " ");
+        if (i != 0)
+            strbuf_append(sb, " ");
         strbuf_append(sb, expr->args[i]->Value);
     }
     strbuf_append(sb, ")");
@@ -219,11 +220,49 @@ char *expression_statement_to_string(ExpressionStatement *es) {
     return expression_to_string(es->expression);
 }
 
+const char *statement_type_to_string(enum StatementType type) {
+    switch (type) {
+    case RETURN_STATEMENT:
+        return "RETURN_STATEMENT";
+    case EXPRESSION_STATEMENT:
+        return "EXPRESSION_STATEMENT";
+    case LET_STATEMENT:
+        return "LET_STATEMENT";
+    case FUNCTION_STATEMENT:
+        return "FUNCTION_STATEMENT";
+    }
+    return "UNKNOWN_STATEMENT";
+}
+
+const char *expression_type_to_string(enum ExpressionType type) {
+    switch (type) {
+    case EXPR_INTEGER:
+        return "EXPR_INTEGER";
+    case EXPR_FLOAT:
+        return "EXPR_FLOAT";
+    case EXPR_STRING:
+        return "EXPR_STRING";
+    case EXPR_BOOL:
+        return "EXPR_BOOL";
+    case EXPR_IDENT:
+        return "EXPR_IDENT";
+    case EXPR_CALL:
+        return "EXPR_CALL";
+    case EXPR_IF:
+        return "EXPR_IF";
+    case EXPR_LAMBDA:
+        return "EXPR_LAMBDA";
+    case EXPR_NIL:
+        return "EXPR_NIL";
+    }
+    return "UNKNOWN_EXPRESSION";
+}
+
 char *ast_to_string(AST *ast) {
 
     StrBuf *sb = strbuf_new();
     for (int i = 0; i < ast->numStatements; i++) {
-        Statement *statement = &ast->statements[i];
+        Statement *statement = ast->statements[i];
 
         if (i != 0 && i < ast->numStatements) {
             strbuf_append(sb, " ");
