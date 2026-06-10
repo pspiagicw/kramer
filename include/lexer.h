@@ -32,7 +32,7 @@ enum TokenType predict_type(char *value);
 
 bool is_letter(char);
 // Modification of is_letter, that includes '-'.
-bool is_iname(char);
+bool is_name(char);
 bool is_digit(char);
 
 void lexer_comment(Lexer *l);

@@ -2,7 +2,7 @@
   (f x))
 
 (fn compose (f g)
-  (fn (x) (f (g x))))
+  (lambda (x) (f (g x))))
 
 (fn double (x) (* x 2))
 (fn square (x) (* x x))

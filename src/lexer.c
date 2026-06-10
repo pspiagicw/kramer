@@ -213,7 +213,7 @@ char lexer_peek(Lexer *l) {
 char *lexer_identifier(Lexer *l) {
     int start = l->curPos;
 
-    while (!l->isEOF && is_iname(l->input[l->curPos])) {
+    while (!l->isEOF && is_name(l->input[l->curPos])) {
         lexer_advance(l);
     }
 
@@ -377,7 +377,7 @@ bool is_letter(char s) {
     }
     return false;
 }
-bool is_iname(char s) { return is_letter(s) || s == '-'; }
+bool is_name(char s) { return is_letter(s) || is_digit(s) || s == '-'; }
 
 bool is_digit(char s) {
     if ('0' <= s && '9' >= s) {
