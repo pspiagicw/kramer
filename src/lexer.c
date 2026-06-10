@@ -223,7 +223,7 @@ char *lexer_identifier(Lexer *l) {
 
     char *dest = malloc(sizeof(char) * length);
     strncpy(dest, l->input + start, length - 1);
-    dest[length] = '\0';
+    dest[length - 1] = '\0';
 
     return dest;
 }
@@ -247,7 +247,7 @@ char *lexer_number(Lexer *l) {
 
     char *dest = malloc(sizeof(char) * length);
     strncpy(dest, l->input + start, length - 1);
-    dest[length] = '\0';
+    dest[length - 1] = '\0';
 
     return dest;
 }
@@ -271,7 +271,7 @@ char *lexer_double_string(Lexer *l) {
 
     char *dest = malloc(sizeof(char) * length);
     strncpy(dest, l->input + start, length - 1);
-    dest[length] = '\0';
+    dest[length - 1] = '\0';
 
     return dest;
 }
@@ -312,7 +312,7 @@ char *lexer_single_string(Lexer *l) {
 
     char *dest = malloc(sizeof(char) * length);
     strncpy(dest, l->input + start, length - 1);
-    dest[length] = '\0';
+    dest[length - 1] = '\0';
 
     return dest;
 }
@@ -341,7 +341,7 @@ char *lexer_multiline_string(Lexer *l) {
     int length = (end - start) + 1;
     char *dest = malloc(sizeof(char) * length);
     strncpy(dest, l->input + start, length - 1);
-    dest[length] = '\n';
+    dest[length - 1] = '\0';
 
     return dest;
 }

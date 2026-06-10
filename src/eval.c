@@ -28,3 +28,5 @@ Value *env_get(Environment *env, const char *name) {
 
     return env->values[index];
 }
+
+Value *eval_ast(AST *ast, Environment *env) { return NULL; }

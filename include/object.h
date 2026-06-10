@@ -41,3 +41,5 @@ struct Environment {
     int capacity;
     Environment *outer;
 };
+
+char *value_to_string(Value *v);

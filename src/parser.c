@@ -255,7 +255,7 @@ Expression *parse_call(Parser *p) {
     c->argumentNum = 0;
     c->argumentList = malloc(sizeof(Expression **));
 
-    while (p->cur_token->Type != RPAREN) {
+    while (p->cur_token->Type != RPAREN && p->cur_token->Type != TOKEN_EOF) {
         add_argument_to_call(c, parse_expression(p));
     }
 
@@ -275,11 +275,14 @@ Statement *parse_fn_statement(Parser *p) {
     parser_advance(p);
 
     FunctionStatement *f = malloc(sizeof(FunctionStatement));
+    f->args = NULL;
+    f->numArgs = 0;
+    f->statement = NULL;
     f->name = parser_expect(p, IDENTIFIER);
 
     parser_expect(p, LPAREN);
 
-    while (p->cur_token->Type != RPAREN) {
+    while (p->cur_token->Type != RPAREN && p->cur_token->Type != TOKEN_EOF) {
         add_arg_to_fn(f, parser_expect(p, IDENTIFIER));
     }
 
@@ -309,7 +312,7 @@ Expression *parse_lambda_expression(Parser *p) {
 
     parser_expect(p, LPAREN);
 
-    while (p->cur_token->Type != RPAREN) {
+    while (p->cur_token->Type != RPAREN && p->cur_token->Type != TOKEN_EOF) {
         add_arg_to_lambda(l, parser_expect(p, IDENTIFIER));
     }
 
