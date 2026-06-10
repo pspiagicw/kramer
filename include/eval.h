@@ -14,3 +14,11 @@ Value *eval_expression(Expression *e, Environment *env);
 
 Value *eval_expression_statement(ExpressionStatement *es, Environment *env);
 Value *eval_expression(Expression *e, Environment *env);
+
+Value *eval_integer(IntegerExpression *e, Environment *env);
+Value *eval_float(FloatExpression *e, Environment *env);
+Value *eval_bool(BoolExpression *e, Environment *env);
+// No need of subtype of nli-expression;
+Value *eval_nil(Expression *e, Environment *env);
+
+Value *eval_string(StringExpression *e, Environment *env);
