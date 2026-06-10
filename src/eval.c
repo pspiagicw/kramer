@@ -30,6 +30,8 @@ Value *eval_expression_statement(ExpressionStatement *es, Environment *env) {
 
 Value *eval_expression(Expression *e, Environment *env) {
     switch (e->type) {
+    case EXPR_IF:
+        return eval_if(e->if_expression, env);
     case EXPR_STRING:
         return eval_string(e->string_expression, env);
     case EXPR_NIL:
@@ -86,6 +88,31 @@ Value *eval_string(StringExpression *e, Environment *env) {
     v->type = VAL_STRING;
 
     v->string = e->value;
+
+    return v;
+}
+
+Value *eval_if(IfExpression *e, Environment *env) {
+    Value *result = eval_expression(e->cond, env);
+
+    if (result->type != VAL_BOOL) {
+        return eval_error(
+            "Error: Expected expression to return bool, returned: %s",
+            value_to_string(result));
+    }
+
+    if (result->boolean) {
+        return eval_expression(e->consequence, env);
+    } else if (e->alternative != NULL) {
+        return eval_expression(e->alternative, env);
+    }
+
+    return make_nil();
+}
+
+Value *make_nil() {
+    Value *v = malloc(sizeof(Value));
+    v->type = VAL_NIL;
 
     return v;
 }

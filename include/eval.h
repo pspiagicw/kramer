@@ -22,3 +22,7 @@ Value *eval_bool(BoolExpression *e, Environment *env);
 Value *eval_nil(Expression *e, Environment *env);
 
 Value *eval_string(StringExpression *e, Environment *env);
+
+Value *eval_if(IfExpression *e, Environment *env);
+
+Value *make_nil();
