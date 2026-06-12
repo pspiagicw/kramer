@@ -198,6 +198,14 @@ set(EVALUATOR_TESTS
     test_eval_eq_bool_false
     test_eval_eq_float_true
     test_eval_eq_float_false
+    test_eval_neq_int_true
+    test_eval_neq_int_false
+    test_eval_neq_string_true
+    test_eval_neq_string_false
+    test_eval_neq_bool_true
+    test_eval_neq_bool_false
+    test_eval_neq_float_true
+    test_eval_neq_float_false
     test_eval_lt
     test_eval_gt
     # boolean logic

@@ -72,6 +72,8 @@ Value *eval_call(CallExpression *e, Environment *env) {
         return eval_divide(args, env, e->argumentNum);
     case EQ:
         return eval_eq(args, env, e->argumentNum);
+    case NEQ:
+        return eval_neq(args, env, e->argumentNum);
     default:
         return eval_error("Call expression can't have %s as function to call.",
                           token_type_name(caller->Type));
@@ -117,6 +119,14 @@ Value *eval_eq(Value **args, Environment *env, int numArgs) {
     res->boolean = result;
 
     return res;
+}
+
+Value *eval_neq(Value **args, Environment *env, int numArgs) {
+    Value *result = eval_eq(args, env, numArgs);
+
+    result->boolean = !result->boolean;
+
+    return result;
 }
 
 Value *eval_addition(Value **args, Environment *env, int numArgs) {

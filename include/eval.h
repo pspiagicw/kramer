@@ -32,6 +32,7 @@ Value *eval_multiply(Value **args, Environment *env, int numArgs);
 Value *eval_divide(Value **args, Environment *env, int numArgs);
 
 Value *eval_eq(Value **args, Environment *env, int numArgs);
+Value *eval_neq(Value **args, Environment *env, int numArgs);
 
 bool compareValues(Value *arg1, Value *arg2);
 

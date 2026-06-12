@@ -79,6 +79,16 @@ void test_eval_eq_bool_true() { assertEval("(== true true)", "true"); }
 void test_eval_eq_bool_false() { assertEval("(== true false)", "false"); }
 void test_eval_eq_float_true() { assertEval("(== 1.5 1.5)", "true"); }
 void test_eval_eq_float_false() { assertEval("(== 1.5 2.5)", "false"); }
+void test_eval_neq_int_true() { assertEval("(!= 1 2)", "true"); }
+void test_eval_neq_int_false() { assertEval("(!= 1 1)", "false"); }
+void test_eval_neq_string_true() { assertEval("(!= \"abc\" \"xyz\")", "true"); }
+void test_eval_neq_string_false() {
+    assertEval("(!= \"abc\" \"abc\")", "false");
+}
+void test_eval_neq_bool_true() { assertEval("(!= true false)", "true"); }
+void test_eval_neq_bool_false() { assertEval("(!= true true)", "false"); }
+void test_eval_neq_float_true() { assertEval("(!= 1.5 2.5)", "true"); }
+void test_eval_neq_float_false() { assertEval("(!= 1.5 1.5)", "false"); }
 void test_eval_lt() { assertEval("(< 1 2)", "true"); }
 void test_eval_gt() { assertEval("(> 2 1)", "true"); }
 
@@ -161,6 +171,14 @@ static const TestEntry EVALUATOR_TESTS[] = {
     {"test_eval_eq_bool_false", test_eval_eq_bool_false},
     {"test_eval_eq_float_true", test_eval_eq_float_true},
     {"test_eval_eq_float_false", test_eval_eq_float_false},
+    {"test_eval_neq_int_true", test_eval_neq_int_true},
+    {"test_eval_neq_int_false", test_eval_neq_int_false},
+    {"test_eval_neq_string_true", test_eval_neq_string_true},
+    {"test_eval_neq_string_false", test_eval_neq_string_false},
+    {"test_eval_neq_bool_true", test_eval_neq_bool_true},
+    {"test_eval_neq_bool_false", test_eval_neq_bool_false},
+    {"test_eval_neq_float_true", test_eval_neq_float_true},
+    {"test_eval_neq_float_false", test_eval_neq_float_false},
     {"test_eval_lt", test_eval_lt},
     {"test_eval_gt", test_eval_gt},
     // boolean logic
