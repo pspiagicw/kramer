@@ -70,10 +70,53 @@ Value *eval_call(CallExpression *e, Environment *env) {
         return eval_multiply(args, env, e->argumentNum);
     case DIVIDE:
         return eval_divide(args, env, e->argumentNum);
+    case EQ:
+        return eval_eq(args, env, e->argumentNum);
     default:
         return eval_error("Call expression can't have %s as function to call.",
                           token_type_name(caller->Type));
     }
+}
+
+// Assumes arg1 and arg2 have same type!
+bool compareValues(Value *arg1, Value *arg2) {
+    switch (arg1->type) {
+    case VAL_INTEGER:
+        return arg1->integer == arg2->integer;
+    case VAL_FLOAT:
+        return arg1->floating == arg2->floating;
+    case VAL_BOOL:
+        return arg1->boolean == arg2->boolean;
+    case VAL_STRING:
+        return strcmp(arg1->string, arg2->string) == 0;
+    default:
+        return eval_error("Can't compare type: %s", value_to_string(arg1));
+    }
+    return false;
+}
+
+Value *eval_eq(Value **args, Environment *env, int numArgs) {
+    bool result = true;
+
+    if (numArgs < 2) {
+        return eval_error("Can't compare less than 2 values!");
+    }
+
+    Value *first = args[0];
+    for (int i = 1; i < numArgs; i++) {
+        Value *val = args[i];
+        if (val->type != first->type) {
+            result = false;
+        } else {
+            result = result && compareValues(first, val);
+        }
+    }
+
+    Value *res = malloc(sizeof(Value));
+    res->type = VAL_BOOL;
+    res->boolean = result;
+
+    return res;
 }
 
 Value *eval_addition(Value **args, Environment *env, int numArgs) {
