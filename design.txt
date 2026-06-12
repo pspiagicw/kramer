@@ -1,0 +1,18 @@
+Design Notes
+============
+
+and/or do not short-circuit
+---------------------------
+eval_call evaluates ALL argument expressions eagerly (in the argument loop)
+before dispatching to eval_and / eval_or, which then fold the resulting
+booleans with && / ||.
+
+This is fine for pure boolean operands, but it means there is NO
+short-circuiting: in (and false (some-effect)), `some-effect` is still
+evaluated even though the result is already known to be false. Likewise
+(or true (some-effect)) still evaluates `some-effect`.
+
+Not a bug while operands are side-effect-free, but once and/or are used for
+control flow over side-effecting calls, they will need to evaluate arguments
+lazily (left to right, stopping at the first false for `and` / first true
+for `or`) instead of pre-evaluating them in eval_call.
