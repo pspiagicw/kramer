@@ -44,10 +44,201 @@ Value *eval_expression(Expression *e, Environment *env) {
     case EXPR_INTEGER:
         return eval_integer(e->integer_expression, env);
         break;
+    case EXPR_CALL:
+        return eval_call(e->call_expression, env);
+        break;
     default:
         return eval_error("Can't evaluate expression of type: %s",
                           expression_type_to_string(e->type));
     }
+}
+
+Value *eval_call(CallExpression *e, Environment *env) {
+    Token *caller = e->caller;
+    Value **args = malloc(sizeof(Value *) * e->argumentNum);
+
+    for (int i = 0; i < e->argumentNum; i++) {
+        args[i] = eval_expression(e->argumentList[i], env);
+    }
+
+    switch (caller->Type) {
+    case PLUS:
+        return eval_addition(args, env, e->argumentNum);
+    case MINUS:
+        return eval_subtract(args, env, e->argumentNum);
+    case MULTIPLY:
+        return eval_multiply(args, env, e->argumentNum);
+    case DIVIDE:
+        return eval_divide(args, env, e->argumentNum);
+    default:
+        return eval_error("Call expression can't have %s as function to call.",
+                          token_type_name(caller->Type));
+    }
+}
+
+Value *eval_addition(Value **args, Environment *env, int numArgs) {
+    float result = 0;
+    bool is_float = false;
+
+    for (int i = 0; i < numArgs; i++) {
+        Value *val = args[i];
+        if (val->type == VAL_INTEGER) {
+            result += val->integer;
+        } else if (val->type == VAL_FLOAT) {
+            result += val->floating;
+            is_float = true;
+        } else {
+            return eval_error("Can't perform addition on: %s",
+                              value_to_string(val));
+        }
+    }
+
+    Value *res = malloc(sizeof(Value));
+    res->type = is_float ? VAL_FLOAT : VAL_INTEGER;
+    if (is_float) {
+        res->floating = result;
+    } else {
+        res->integer = result;
+    }
+
+    return res;
+}
+
+Value *eval_subtract(Value **args, Environment *env, int numArgs) {
+
+    if (numArgs == 0) {
+        return eval_error("Atleast 1 argument required for subtraction.");
+    }
+
+    if (numArgs == 1) {
+        Value *val = args[0];
+        if (val->type == VAL_INTEGER) {
+            val->integer = -val->integer;
+        } else if (val->type == VAL_FLOAT) {
+            val->floating = -val->floating;
+        } else {
+            return eval_error("Can't perform subtraction on: %s",
+                              value_to_string(val));
+        }
+
+        return val;
+    }
+
+    float result = 0;
+    bool is_float = false;
+
+    for (int i = 0; i < numArgs; i++) {
+        Value *val = args[i];
+        if (val->type == VAL_INTEGER) {
+            // First case
+            if (i == 0) {
+                result = val->integer;
+            } else {
+                result = result - val->integer;
+            }
+        } else if (val->type == VAL_FLOAT) {
+            if (i == 0) {
+                result = val->floating;
+            } else {
+                result = result - val->floating;
+            }
+            is_float = true;
+        } else {
+            return eval_error("Can't perform subtraction on: %s",
+                              value_to_string(val));
+        }
+    }
+
+    Value *res = malloc(sizeof(Value));
+    res->type = is_float ? VAL_FLOAT : VAL_INTEGER;
+    if (is_float) {
+        res->floating = result;
+    } else {
+        res->integer = result;
+    }
+
+    return res;
+}
+
+Value *eval_multiply(Value **args, Environment *env, int numArgs) {
+    float result = 1;
+    bool is_float = false;
+
+    for (int i = 0; i < numArgs; i++) {
+        Value *val = args[i];
+        if (val->type == VAL_INTEGER) {
+            result *= val->integer;
+        } else if (val->type == VAL_FLOAT) {
+            result *= val->floating;
+            is_float = true;
+        } else {
+            return eval_error("Can't perform multiplication on: %s",
+                              value_to_string(val));
+        }
+    }
+
+    Value *res = malloc(sizeof(Value));
+    res->type = is_float ? VAL_FLOAT : VAL_INTEGER;
+    if (is_float) {
+        res->floating = result;
+    } else {
+        res->integer = result;
+    }
+
+    return res;
+}
+
+Value *eval_divide(Value **args, Environment *env, int numArgs) {
+    if (numArgs == 0) {
+        return eval_error("Atleast 1 argument required for subtration.");
+    }
+
+    if (numArgs == 1) {
+        Value *val = args[0];
+        if (val->type == VAL_INTEGER) {
+            if (val->integer == 0) {
+                return eval_error("Can't divide by zero!");
+            }
+            val->floating = 1.0 / val->integer;
+            val->type = VAL_FLOAT;
+        } else if (val->type == VAL_FLOAT) {
+            if (val->floating == 0) {
+                return eval_error("Can't divide by zero!");
+            }
+            val->floating = 1.0 / val->floating;
+        }
+
+        return val;
+    }
+
+    float result = 0;
+
+    for (int i = 0; i < numArgs; i++) {
+        Value *val = args[i];
+        if (val->type == VAL_INTEGER) {
+            // First case
+            if (i == 0) {
+                result = val->integer;
+            } else {
+                result = result / val->integer;
+            }
+        } else if (val->type == VAL_FLOAT) {
+            if (i == 0) {
+                result = val->floating;
+            } else {
+                result /= val->floating;
+            }
+        } else {
+            return eval_error("Can't perform division on: %s",
+                              value_to_string(val));
+        }
+    }
+
+    Value *res = malloc(sizeof(Value));
+    res->floating = result;
+    res->type = VAL_FLOAT;
+
+    return res;
 }
 
 Value *eval_integer(IntegerExpression *e, Environment *env) {

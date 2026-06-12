@@ -42,6 +42,34 @@ void test_eval_divide() { assertEval("(/ 10 2)", "5"); }
 void test_eval_modulo() { assertEval("(% 10 3)", "1"); }
 void test_eval_nested() { assertEval("(+ (* 2 3) 4)", "10"); }
 
+// addition: single arg (identity), int+int, float+int, float+float
+void test_eval_add_single_int() { assertEval("(+ 5)", "5"); }
+void test_eval_add_single_float() { assertEval("(+ 2.5)", "2.5"); }
+void test_eval_add_int_int() { assertEval("(+ 2 3)", "5"); }
+void test_eval_add_float_int() { assertEval("(+ 2.5 3)", "5.5"); }
+void test_eval_add_float_float() { assertEval("(+ 2.5 1.25)", "3.75"); }
+
+// subtraction: single arg (negation), int-int, float-int, float-float
+void test_eval_subtract_single_int() { assertEval("(- 5)", "-5"); }
+void test_eval_subtract_single_float() { assertEval("(- 2.5)", "-2.5"); }
+void test_eval_subtract_int_int() { assertEval("(- 10 4)", "6"); }
+void test_eval_subtract_float_int() { assertEval("(- 5.5 2)", "3.5"); }
+void test_eval_subtract_float_float() { assertEval("(- 5.5 1.25)", "4.25"); }
+
+// multiplication: single arg (identity), int*int, float*int, float*float
+void test_eval_multiply_single_int() { assertEval("(* 5)", "5"); }
+void test_eval_multiply_single_float() { assertEval("(* 2.5)", "2.5"); }
+void test_eval_multiply_int_int() { assertEval("(* 3 4)", "12"); }
+void test_eval_multiply_float_int() { assertEval("(* 2.5 3)", "7.5"); }
+void test_eval_multiply_float_float() { assertEval("(* 2.5 1.5)", "3.75"); }
+
+// division: single arg (reciprocal), int/int, float/int, float/float
+void test_eval_divide_single_int() { assertEval("(/ 5)", "0.2"); }
+void test_eval_divide_single_float() { assertEval("(/ 2.0)", "0.5"); }
+void test_eval_divide_int_int() { assertEval("(/ 10 2)", "5"); }
+void test_eval_divide_float_int() { assertEval("(/ 7.5 3)", "2.5"); }
+void test_eval_divide_float_float() { assertEval("(/ 9.0 4.0)", "2.25"); }
+
 // comparison
 void test_eval_eq_true() { assertEval("(== 1 1)", "true"); }
 void test_eval_eq_false() { assertEval("(== 1 2)", "false"); }
@@ -94,6 +122,30 @@ static const TestEntry EVALUATOR_TESTS[] = {
     {"test_eval_divide", test_eval_divide},
     {"test_eval_modulo", test_eval_modulo},
     {"test_eval_nested", test_eval_nested},
+    // addition
+    {"test_eval_add_single_int", test_eval_add_single_int},
+    {"test_eval_add_single_float", test_eval_add_single_float},
+    {"test_eval_add_int_int", test_eval_add_int_int},
+    {"test_eval_add_float_int", test_eval_add_float_int},
+    {"test_eval_add_float_float", test_eval_add_float_float},
+    // subtraction
+    {"test_eval_subtract_single_int", test_eval_subtract_single_int},
+    {"test_eval_subtract_single_float", test_eval_subtract_single_float},
+    {"test_eval_subtract_int_int", test_eval_subtract_int_int},
+    {"test_eval_subtract_float_int", test_eval_subtract_float_int},
+    {"test_eval_subtract_float_float", test_eval_subtract_float_float},
+    // multiplication
+    {"test_eval_multiply_single_int", test_eval_multiply_single_int},
+    {"test_eval_multiply_single_float", test_eval_multiply_single_float},
+    {"test_eval_multiply_int_int", test_eval_multiply_int_int},
+    {"test_eval_multiply_float_int", test_eval_multiply_float_int},
+    {"test_eval_multiply_float_float", test_eval_multiply_float_float},
+    // division
+    {"test_eval_divide_single_int", test_eval_divide_single_int},
+    {"test_eval_divide_single_float", test_eval_divide_single_float},
+    {"test_eval_divide_int_int", test_eval_divide_int_int},
+    {"test_eval_divide_float_int", test_eval_divide_float_int},
+    {"test_eval_divide_float_float", test_eval_divide_float_float},
     // comparison
     {"test_eval_eq_true", test_eval_eq_true},
     {"test_eval_eq_false", test_eval_eq_false},

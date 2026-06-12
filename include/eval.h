@@ -25,4 +25,10 @@ Value *eval_string(StringExpression *e, Environment *env);
 
 Value *eval_if(IfExpression *e, Environment *env);
 
+Value *eval_call(CallExpression *e, Environment *env);
+Value *eval_addition(Value **args, Environment *env, int numArgs);
+Value *eval_subtract(Value **args, Environment *env, int numArgs);
+Value *eval_multiply(Value **args, Environment *env, int numArgs);
+Value *eval_divide(Value **args, Environment *env, int numArgs);
+
 Value *make_nil();

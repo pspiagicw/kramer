@@ -169,6 +169,26 @@ set(EVALUATOR_TESTS
     test_eval_divide
     test_eval_modulo
     test_eval_nested
+    test_eval_add_single_int
+    test_eval_add_single_float
+    test_eval_add_int_int
+    test_eval_add_float_int
+    test_eval_add_float_float
+    test_eval_subtract_single_int
+    test_eval_subtract_single_float
+    test_eval_subtract_int_int
+    test_eval_subtract_float_int
+    test_eval_subtract_float_float
+    test_eval_multiply_single_int
+    test_eval_multiply_single_float
+    test_eval_multiply_int_int
+    test_eval_multiply_float_int
+    test_eval_multiply_float_float
+    test_eval_divide_single_int
+    test_eval_divide_single_float
+    test_eval_divide_int_int
+    test_eval_divide_float_int
+    test_eval_divide_float_float
     # comparison
     test_eval_eq_true
     test_eval_eq_false
