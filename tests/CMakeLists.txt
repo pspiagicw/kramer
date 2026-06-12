@@ -208,6 +208,26 @@ set(EVALUATOR_TESTS
     test_eval_neq_float_false
     test_eval_lt
     test_eval_gt
+    test_eval_lte
+    test_eval_lte_equal
+    test_eval_gte
+    test_eval_gte_equal
+    test_eval_lt_variadic_int
+    test_eval_lt_variadic_int_false
+    test_eval_lt_variadic_float
+    test_eval_lt_variadic_mixed
+    test_eval_gt_variadic_int
+    test_eval_gt_variadic_int_false
+    test_eval_gt_variadic_float
+    test_eval_gt_variadic_mixed
+    test_eval_lte_variadic_int
+    test_eval_lte_variadic_int_false
+    test_eval_lte_variadic_float
+    test_eval_lte_variadic_mixed
+    test_eval_gte_variadic_int
+    test_eval_gte_variadic_int_false
+    test_eval_gte_variadic_float
+    test_eval_gte_variadic_mixed
     # boolean logic
     test_eval_and
     test_eval_or

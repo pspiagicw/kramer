@@ -74,10 +74,166 @@ Value *eval_call(CallExpression *e, Environment *env) {
         return eval_eq(args, env, e->argumentNum);
     case NEQ:
         return eval_neq(args, env, e->argumentNum);
+    case LT:
+        return eval_lt(args, env, e->argumentNum);
+    case GT:
+        return eval_gt(args, env, e->argumentNum);
+    case LTE:
+        return eval_lte(args, env, e->argumentNum);
+    case GTE:
+        return eval_gte(args, env, e->argumentNum);
     default:
         return eval_error("Call expression can't have %s as function to call.",
                           token_type_name(caller->Type));
     }
+}
+
+Value *eval_gte(Value **args, Environment *env, int numArgs) {
+    if (numArgs < 2) {
+        return eval_error("Needs atleast 2 arguments for comparison, got %d",
+                          numArgs);
+    }
+
+    float store = 0;
+    bool result = true;
+
+    for (int i = 0; i < numArgs; i++) {
+        Value *val = args[i];
+        if (val->type == VAL_INTEGER) {
+            if (i == 0) {
+                store = val->integer;
+            } else {
+                result = result && (store >= val->integer);
+                store = val->integer;
+            }
+        } else if (val->type == VAL_FLOAT) {
+            if (i == 0) {
+                store = val->floating;
+            } else {
+                result = result && (store >= val->floating);
+                store = val->floating;
+            }
+        } else {
+            return eval_error("Can't compare type: %s", value_to_string(val));
+        }
+    }
+
+    Value *res = malloc(sizeof(Value));
+    res->type = VAL_BOOL;
+    res->boolean = result;
+
+    return res;
+}
+
+Value *eval_lte(Value **args, Environment *env, int numArgs) {
+    if (numArgs < 2) {
+        return eval_error("Needs atleast 2 arguments for comparison, got %d",
+                          numArgs);
+    }
+
+    float store = 0;
+    bool result = true;
+
+    for (int i = 0; i < numArgs; i++) {
+        Value *val = args[i];
+        if (val->type == VAL_INTEGER) {
+            if (i == 0) {
+                store = val->integer;
+            } else {
+                result = result && (store <= val->integer);
+                store = val->integer;
+            }
+        } else if (val->type == VAL_FLOAT) {
+            if (i == 0) {
+                store = val->floating;
+            } else {
+                result = result && (store <= val->floating);
+                store = val->floating;
+            }
+        } else {
+            return eval_error("Can't compare type: %s", value_to_string(val));
+        }
+    }
+
+    Value *res = malloc(sizeof(Value));
+    res->type = VAL_BOOL;
+    res->boolean = result;
+
+    return res;
+}
+
+Value *eval_lt(Value **args, Environment *env, int numArgs) {
+    if (numArgs < 2) {
+        return eval_error("Needs atleast 2 arguments for comparison, got %d",
+                          numArgs);
+    }
+
+    float store = 0;
+    bool result = true;
+
+    for (int i = 0; i < numArgs; i++) {
+        Value *val = args[i];
+        if (val->type == VAL_INTEGER) {
+            if (i == 0) {
+                store = val->integer;
+            } else {
+                result = result && (store < val->integer);
+                store = val->integer;
+            }
+        } else if (val->type == VAL_FLOAT) {
+            if (i == 0) {
+                store = val->floating;
+            } else {
+                result = result && (store < val->floating);
+                store = val->floating;
+            }
+        } else {
+            return eval_error("Can't compare type: %s", value_to_string(val));
+        }
+    }
+
+    Value *res = malloc(sizeof(Value));
+    res->type = VAL_BOOL;
+    res->boolean = result;
+
+    return res;
+}
+
+Value *eval_gt(Value **args, Environment *env, int numArgs) {
+    if (numArgs < 2) {
+        return eval_error("Needs atleast 2 arguments for comparison, got %d",
+                          numArgs);
+    }
+
+    float store = 0;
+    bool result = true;
+
+    for (int i = 0; i < numArgs; i++) {
+        Value *val = args[i];
+        if (val->type == VAL_INTEGER) {
+            if (i == 0) {
+                store = val->integer;
+            } else {
+                result = result && (store > val->integer);
+                store = val->integer;
+            }
+        } else if (val->type == VAL_FLOAT) {
+            if (i == 0) {
+                store = val->floating;
+            } else {
+                result = result && (store > val->floating);
+                store = val->floating;
+            }
+        } else {
+            return eval_error("Can't compare type: %s", value_to_string(val));
+        }
+    }
+
+    Value *res = malloc(sizeof(Value));
+    res->type = VAL_BOOL;
+    res->boolean = result;
+
+    return res;
 }
 
 // Assumes arg1 and arg2 have same type!

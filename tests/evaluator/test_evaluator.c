@@ -91,6 +91,34 @@ void test_eval_neq_float_true() { assertEval("(!= 1.5 2.5)", "true"); }
 void test_eval_neq_float_false() { assertEval("(!= 1.5 1.5)", "false"); }
 void test_eval_lt() { assertEval("(< 1 2)", "true"); }
 void test_eval_gt() { assertEval("(> 2 1)", "true"); }
+void test_eval_lte() { assertEval("(<= 1 2)", "true"); }
+void test_eval_lte_equal() { assertEval("(<= 2 2)", "true"); }
+void test_eval_gte() { assertEval("(>= 2 1)", "true"); }
+void test_eval_gte_equal() { assertEval("(>= 2 2)", "true"); }
+
+// variadic comparison: lt (<), strictly increasing
+void test_eval_lt_variadic_int() { assertEval("(< 1 2 3)", "true"); }
+void test_eval_lt_variadic_int_false() { assertEval("(< 1 3 2)", "false"); }
+void test_eval_lt_variadic_float() { assertEval("(< 1.5 2.5 3.5)", "true"); }
+void test_eval_lt_variadic_mixed() { assertEval("(< 1 2.5 3)", "true"); }
+
+// variadic comparison: gt (>), strictly decreasing
+void test_eval_gt_variadic_int() { assertEval("(> 3 2 1)", "true"); }
+void test_eval_gt_variadic_int_false() { assertEval("(> 3 1 2)", "false"); }
+void test_eval_gt_variadic_float() { assertEval("(> 3.5 2.5 1.5)", "true"); }
+void test_eval_gt_variadic_mixed() { assertEval("(> 3 2.5 1)", "true"); }
+
+// variadic comparison: lte (<=), non-decreasing
+void test_eval_lte_variadic_int() { assertEval("(<= 1 2 2)", "true"); }
+void test_eval_lte_variadic_int_false() { assertEval("(<= 1 3 2)", "false"); }
+void test_eval_lte_variadic_float() { assertEval("(<= 1.5 2.5 2.5)", "true"); }
+void test_eval_lte_variadic_mixed() { assertEval("(<= 1 2.0 2.5)", "true"); }
+
+// variadic comparison: gte (>=), non-increasing
+void test_eval_gte_variadic_int() { assertEval("(>= 3 2 2)", "true"); }
+void test_eval_gte_variadic_int_false() { assertEval("(>= 3 1 2)", "false"); }
+void test_eval_gte_variadic_float() { assertEval("(>= 3.5 2.5 2.5)", "true"); }
+void test_eval_gte_variadic_mixed() { assertEval("(>= 3.0 2 2.0)", "true"); }
 
 // boolean logic
 void test_eval_and() { assertEval("(and true false)", "false"); }
@@ -181,6 +209,27 @@ static const TestEntry EVALUATOR_TESTS[] = {
     {"test_eval_neq_float_false", test_eval_neq_float_false},
     {"test_eval_lt", test_eval_lt},
     {"test_eval_gt", test_eval_gt},
+    {"test_eval_lte", test_eval_lte},
+    {"test_eval_lte_equal", test_eval_lte_equal},
+    {"test_eval_gte", test_eval_gte},
+    {"test_eval_gte_equal", test_eval_gte_equal},
+    // variadic comparison
+    {"test_eval_lt_variadic_int", test_eval_lt_variadic_int},
+    {"test_eval_lt_variadic_int_false", test_eval_lt_variadic_int_false},
+    {"test_eval_lt_variadic_float", test_eval_lt_variadic_float},
+    {"test_eval_lt_variadic_mixed", test_eval_lt_variadic_mixed},
+    {"test_eval_gt_variadic_int", test_eval_gt_variadic_int},
+    {"test_eval_gt_variadic_int_false", test_eval_gt_variadic_int_false},
+    {"test_eval_gt_variadic_float", test_eval_gt_variadic_float},
+    {"test_eval_gt_variadic_mixed", test_eval_gt_variadic_mixed},
+    {"test_eval_lte_variadic_int", test_eval_lte_variadic_int},
+    {"test_eval_lte_variadic_int_false", test_eval_lte_variadic_int_false},
+    {"test_eval_lte_variadic_float", test_eval_lte_variadic_float},
+    {"test_eval_lte_variadic_mixed", test_eval_lte_variadic_mixed},
+    {"test_eval_gte_variadic_int", test_eval_gte_variadic_int},
+    {"test_eval_gte_variadic_int_false", test_eval_gte_variadic_int_false},
+    {"test_eval_gte_variadic_float", test_eval_gte_variadic_float},
+    {"test_eval_gte_variadic_mixed", test_eval_gte_variadic_mixed},
     // boolean logic
     {"test_eval_and", test_eval_and},
     {"test_eval_or", test_eval_or},
