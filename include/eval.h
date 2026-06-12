@@ -10,14 +10,18 @@ void env_set(Environment *env, const char *name, Value *value);
 
 Value *eval_ast(AST *ast, Environment *env);
 Value *eval_statement(Statement *s, Environment *env);
+
 Value *eval_expression(Expression *e, Environment *env);
 
 Value *eval_expression_statement(ExpressionStatement *es, Environment *env);
+Value *eval_let_statement(LetStatement *lt, Environment *env);
+
 Value *eval_expression(Expression *e, Environment *env);
 
 Value *eval_integer(IntegerExpression *e, Environment *env);
 Value *eval_float(FloatExpression *e, Environment *env);
 Value *eval_bool(BoolExpression *e, Environment *env);
+Value *eval_ident(IdentifierExpression *e, Environment *env);
 // No need of subtype of nli-expression;
 Value *eval_nil(Expression *e, Environment *env);
 
@@ -37,6 +41,9 @@ Value *eval_lt(Value **args, Environment *env, int numArgs);
 Value *eval_gt(Value **args, Environment *env, int numArgs);
 Value *eval_lte(Value **args, Environment *env, int numArgs);
 Value *eval_gte(Value **args, Environment *env, int numArgs);
+Value *eval_not(Value **args, Environment *env, int numArgs);
+Value *eval_and(Value **args, Environment *env, int numArgs);
+Value *eval_or(Value **args, Environment *env, int numArgs);
 
 bool compareValues(Value *arg1, Value *arg2);
 

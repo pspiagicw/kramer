@@ -74,7 +74,9 @@ void test_eval_divide_float_float() { assertEval("(/ 9.0 4.0)", "2.25"); }
 void test_eval_eq_true() { assertEval("(== 1 1)", "true"); }
 void test_eval_eq_false() { assertEval("(== 1 2)", "false"); }
 void test_eval_eq_string_true() { assertEval("(== \"abc\" \"abc\")", "true"); }
-void test_eval_eq_string_false() { assertEval("(== \"abc\" \"xyz\")", "false"); }
+void test_eval_eq_string_false() {
+    assertEval("(== \"abc\" \"xyz\")", "false");
+}
 void test_eval_eq_bool_true() { assertEval("(== true true)", "true"); }
 void test_eval_eq_bool_false() { assertEval("(== true false)", "false"); }
 void test_eval_eq_float_true() { assertEval("(== 1.5 1.5)", "true"); }
@@ -124,6 +126,22 @@ void test_eval_gte_variadic_mixed() { assertEval("(>= 3.0 2 2.0)", "true"); }
 void test_eval_and() { assertEval("(and true false)", "false"); }
 void test_eval_or() { assertEval("(or true false)", "true"); }
 void test_eval_not() { assertEval("(not true)", "false"); }
+
+// variadic and: true only when every operand is true
+void test_eval_and_variadic_true() {
+    assertEval("(and true true true)", "true");
+}
+void test_eval_and_variadic_false() {
+    assertEval("(and true true false)", "false");
+}
+
+// variadic or: true when any operand is true
+void test_eval_or_variadic_true() {
+    assertEval("(or false false true)", "true");
+}
+void test_eval_or_variadic_false() {
+    assertEval("(or false false false)", "false");
+}
 
 // string
 void test_eval_concat() {
@@ -233,6 +251,10 @@ static const TestEntry EVALUATOR_TESTS[] = {
     // boolean logic
     {"test_eval_and", test_eval_and},
     {"test_eval_or", test_eval_or},
+    {"test_eval_and_variadic_true", test_eval_and_variadic_true},
+    {"test_eval_and_variadic_false", test_eval_and_variadic_false},
+    {"test_eval_or_variadic_true", test_eval_or_variadic_true},
+    {"test_eval_or_variadic_false", test_eval_or_variadic_false},
     {"test_eval_not", test_eval_not},
     // string
     {"test_eval_concat", test_eval_concat},

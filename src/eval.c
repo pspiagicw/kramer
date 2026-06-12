@@ -17,11 +17,20 @@ Value *eval_statement(Statement *s, Environment *env) {
     case EXPRESSION_STATEMENT:
         return eval_expression_statement(s->expression_statement, env);
         break;
+    case LET_STATEMENT:
+        return eval_let_statement(s->let_statement, env);
     default:
         return eval_error("Can't evaluate statement of type: %s",
                           statement_type_to_string(s->type));
         return NULL;
     }
+}
+
+Value *eval_let_statement(LetStatement *lt, Environment *env) {
+    Value *value = eval_expression(lt->Value, env);
+    env_set(env, lt->name->Value, value);
+
+    return make_nil();
 }
 
 Value *eval_expression_statement(ExpressionStatement *es, Environment *env) {
@@ -44,6 +53,9 @@ Value *eval_expression(Expression *e, Environment *env) {
     case EXPR_INTEGER:
         return eval_integer(e->integer_expression, env);
         break;
+    case EXPR_IDENT:
+        return eval_ident(e->identifier_expression, env);
+        break;
     case EXPR_CALL:
         return eval_call(e->call_expression, env);
         break;
@@ -51,6 +63,15 @@ Value *eval_expression(Expression *e, Environment *env) {
         return eval_error("Can't evaluate expression of type: %s",
                           expression_type_to_string(e->type));
     }
+}
+
+Value *eval_ident(IdentifierExpression *e, Environment *env) {
+    Value *val = env_get(env, e->value);
+    if (val == NULL) {
+        return eval_error("No such value: %s", e->value);
+    }
+
+    return val;
 }
 
 Value *eval_call(CallExpression *e, Environment *env) {
@@ -82,10 +103,79 @@ Value *eval_call(CallExpression *e, Environment *env) {
         return eval_lte(args, env, e->argumentNum);
     case GTE:
         return eval_gte(args, env, e->argumentNum);
+    case NOT:
+        return eval_not(args, env, e->argumentNum);
+    case AND:
+        return eval_and(args, env, e->argumentNum);
+    case OR:
+        return eval_or(args, env, e->argumentNum);
     default:
         return eval_error("Call expression can't have %s as function to call.",
                           token_type_name(caller->Type));
     }
+}
+
+Value *eval_not(Value **args, Environment *env, int numArgs) {
+    if (numArgs != 1) {
+        return eval_error("NOT requires only 1 argument got %d", numArgs);
+    }
+
+    Value *res = args[0];
+
+    if (res->type != VAL_BOOL) {
+        return eval_error("NOT requires boolean arguments, got %s",
+                          value_to_string(res));
+    }
+
+    res->boolean = !res->boolean;
+
+    return res;
+}
+
+Value *eval_and(Value **args, Environment *env, int numArgs) {
+    if (numArgs < 2) {
+        return eval_error("AND requires atleast 2 arguments, got %d", numArgs);
+    }
+    bool result = true;
+
+    for (int i = 0; i < numArgs; i++) {
+        Value *val = args[i];
+        if (val->type == VAL_BOOL) {
+            result = result && val->boolean;
+        } else {
+            return eval_error("AND requires boolean, got %s",
+                              value_to_string(val));
+        }
+    }
+
+    Value *res = malloc(sizeof(Value));
+    res->type = VAL_BOOL;
+    res->boolean = result;
+
+    return res;
+}
+
+Value *eval_or(Value **args, Environment *env, int numArgs) {
+    if (numArgs < 2) {
+        return eval_error("AND requires atleast 2 arguments, got %d", numArgs);
+    }
+    bool result = false;
+
+    for (int i = 0; i < numArgs; i++) {
+        Value *val = args[i];
+        if (val->type == VAL_BOOL) {
+            result = result || val->boolean;
+        } else {
+            return eval_error("AND requires boolean, got %s",
+                              value_to_string(val));
+        }
+    }
+
+    Value *res = malloc(sizeof(Value));
+    res->type = VAL_BOOL;
+    res->boolean = result;
+
+    return res;
 }
 
 Value *eval_gte(Value **args, Environment *env, int numArgs) {

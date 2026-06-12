@@ -231,6 +231,10 @@ set(EVALUATOR_TESTS
     # boolean logic
     test_eval_and
     test_eval_or
+    test_eval_and_variadic_true
+    test_eval_and_variadic_false
+    test_eval_or_variadic_true
+    test_eval_or_variadic_false
     test_eval_not
     # string
     test_eval_concat
