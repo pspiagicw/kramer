@@ -163,6 +163,87 @@ void test_eval_fn_call() {
 }
 void test_eval_return() { assertEval("(fn id (x) (return x)) (id 42)", "42"); }
 
+// fn: arity — no args, single arg, three args
+void test_eval_fn_no_args() { assertEval("(fn five () 5) (five)", "5"); }
+void test_eval_fn_single_arg() {
+    assertEval("(fn square (x) (* x x)) (square 5)", "25");
+}
+void test_eval_fn_three_args() {
+    assertEval("(fn add3 (a b c) (+ a b c)) (add3 1 2 3)", "6");
+}
+
+// fn: explicit return of an expression
+void test_eval_fn_return_expr() {
+    assertEval("(fn add (x y) (return (+ x y))) (add 2 3)", "5");
+}
+
+// fn: conditional body
+void test_eval_fn_conditional_body() {
+    assertEval("(fn absval (x) (if (< x 0) (- 0 x) x)) (absval (- 0 5))", "5");
+}
+
+// fn: direct recursion
+void test_eval_fn_recursion_factorial() {
+    assertEval("(fn factorial (n) (if (== n 0) 1 (* n (factorial (- n 1))))) "
+               "(factorial 5)",
+               "120");
+}
+void test_eval_fn_recursion_sum() {
+    assertEval(
+        "(fn sum (n) (if (== n 0) 0 (+ n (sum (- n 1))))) (sum 10)", "55");
+}
+void test_eval_fn_recursion_power() {
+    assertEval("(fn power (base exp) (if (== exp 0) 1 (* base (power base (- "
+               "exp 1))))) (power 2 10)",
+               "1024");
+}
+
+// fn: tail/accumulator recursion
+void test_eval_fn_tail_recursion_acc() {
+    assertEval("(fn sum_acc (n acc) (if (== n 0) acc (sum_acc (- n 1) (+ acc "
+               "n)))) (sum_acc 10 0)",
+               "55");
+}
+
+// fn: mutual recursion
+void test_eval_fn_mutual_recursion() {
+    assertEval("(fn is_even (n) (if (== n 0) true (is_odd (- n 1)))) "
+               "(fn is_odd (n) (if (== n 0) false (is_even (- n 1)))) "
+               "(is_even 4)",
+               "true");
+}
+
+// fn: lambda bound to a name, then called
+void test_eval_lambda_let_bound() {
+    assertEval("(let sq (lambda (x) (* x x))) (sq 6)", "36");
+}
+
+// fn: closure / currying — a function returning a lambda that captures x
+void test_eval_fn_closure() {
+    assertEval("(fn adder (x) (lambda (y) (+ x y))) "
+               "(let add5 (adder 5)) (add5 3)",
+               "8");
+}
+
+// fn: higher-order — function passed as an argument
+void test_eval_fn_higher_order_apply() {
+    assertEval("(fn apply (f x) (f x)) (fn double (x) (* x 2)) (apply double 5)",
+               "10");
+}
+
+// fn: composition — combine two functions into a new one
+void test_eval_fn_compose() {
+    assertEval("(fn compose (f g) (lambda (x) (f (g x)))) "
+               "(fn double (x) (* x 2)) (fn square (x) (* x x)) "
+               "(let ds (compose square double)) (ds 3)",
+               "36");
+}
+
+// fn: nested calls on the result of another call
+void test_eval_fn_nested_calls() {
+    assertEval("(fn inc (x) (+ x 1)) (inc (inc (inc 0)))", "3");
+}
+
 typedef void (*TestFn)(void);
 typedef struct {
     const char *name;
@@ -268,6 +349,21 @@ static const TestEntry EVALUATOR_TESTS[] = {
     // fn
     {"test_eval_fn_call", test_eval_fn_call},
     {"test_eval_return", test_eval_return},
+    {"test_eval_fn_no_args", test_eval_fn_no_args},
+    {"test_eval_fn_single_arg", test_eval_fn_single_arg},
+    {"test_eval_fn_three_args", test_eval_fn_three_args},
+    {"test_eval_fn_return_expr", test_eval_fn_return_expr},
+    {"test_eval_fn_conditional_body", test_eval_fn_conditional_body},
+    {"test_eval_fn_recursion_factorial", test_eval_fn_recursion_factorial},
+    {"test_eval_fn_recursion_sum", test_eval_fn_recursion_sum},
+    {"test_eval_fn_recursion_power", test_eval_fn_recursion_power},
+    {"test_eval_fn_tail_recursion_acc", test_eval_fn_tail_recursion_acc},
+    {"test_eval_fn_mutual_recursion", test_eval_fn_mutual_recursion},
+    {"test_eval_lambda_let_bound", test_eval_lambda_let_bound},
+    {"test_eval_fn_closure", test_eval_fn_closure},
+    {"test_eval_fn_higher_order_apply", test_eval_fn_higher_order_apply},
+    {"test_eval_fn_compose", test_eval_fn_compose},
+    {"test_eval_fn_nested_calls", test_eval_fn_nested_calls},
 };
 
 #define NUM_EVALUATOR_TESTS                                                    \

@@ -16,3 +16,25 @@ Not a bug while operands are side-effect-free, but once and/or are used for
 control flow over side-effecting calls, they will need to evaluate arguments
 lazily (left to right, stopping at the first false for `and` / first true
 for `or`) instead of pre-evaluating them in eval_call.
+
+call operator must be a single token (no immediate application)
+---------------------------------------------------------------
+CallExpression.caller is a Token, and parse_call takes whatever single token
+sits right after the '(' as the operator. So a call's operator position must
+be an identifier (a function name or a parameter bound to a function) or a
+built-in operator token -- it cannot be an arbitrary expression.
+
+This means immediate application of a freshly-produced function does NOT
+parse:
+
+    ((lambda (x) (* x x)) 5)      ; NOT supported
+    ((adder 5) 10)                ; NOT supported
+
+A function must first be bound to a name and then called through that name:
+
+    (let sq (lambda (x) (* x x))) (sq 5)
+    (let add5 (adder 5)) (add5 10)
+
+To support immediate application, CallExpression.caller would need to become
+an Expression (evaluated to a function value) instead of a Token, and
+parse_call would parse the operator position as a full expression.

@@ -248,6 +248,21 @@ set(EVALUATOR_TESTS
     # fn
     test_eval_fn_call
     test_eval_return
+    test_eval_fn_no_args
+    test_eval_fn_single_arg
+    test_eval_fn_three_args
+    test_eval_fn_return_expr
+    test_eval_fn_conditional_body
+    test_eval_fn_recursion_factorial
+    test_eval_fn_recursion_sum
+    test_eval_fn_recursion_power
+    test_eval_fn_tail_recursion_acc
+    test_eval_fn_mutual_recursion
+    test_eval_lambda_let_bound
+    test_eval_fn_closure
+    test_eval_fn_higher_order_apply
+    test_eval_fn_compose
+    test_eval_fn_nested_calls
 )
 
 foreach(test_name ${EVALUATOR_TESTS})
